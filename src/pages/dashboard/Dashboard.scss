@@ -1,0 +1,200 @@
+@use "../../styles/variables.scss" as *;
+@use "../../styles/mixins.scss" as *;
+
+@mixin parent-box {
+  height: 90vh;
+  padding: 20px 15px;
+  margin-top: 10px;
+}
+
+@mixin child-box {
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: $primary-box-shadow;
+  border-radius: 20px;
+  padding: 25px 20px;
+}
+
+.main-content-dashboard {
+  @include parent-box;
+  width: 100%;
+
+  .main-content-box {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    @include child-box;
+    height: 100%;
+    width: 90%;
+
+    .main-content-header {
+      display: flex;
+      justify-content: flex-end;
+      column-gap: 20px;
+      margin-top: 10px;
+      button {
+        @include button-styles;
+        width: 180px;
+        height: 40px;
+        background-color: $green-color;
+        border-radius: 8px;
+        color: white;
+
+        &:hover {
+          background-color: $dark-green-color;
+        }
+      }
+
+      input {
+        @include text-input-styles;
+        width: 350px;
+        padding: 10px;
+        font-size: 14px;
+
+        &::placeholder {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .main-content-table {
+      margin-top: 30px;
+      height: inherit;
+      display: flex;
+      justify-content: center;
+      table {
+        height: 90%;
+        width: 100%;
+        border-spacing: 0;
+        border-collapse: separate;
+        background-color: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #eee;
+
+        thead,
+        tbody tr {
+          display: table;
+          width: 100%;
+          table-layout: fixed;
+        }
+
+        tbody {
+          color: #1a202c;
+          opacity: 0.8;
+          display: block;
+          height: inherit;
+          overflow: scroll;
+        }
+
+        thead tr {
+          background-color: $green-color;
+          opacity: 0.9;
+          color: #ffffff;
+          text-align: left;
+          border-radius: 10px;
+
+          th {
+            font-weight: 400;
+          }
+        }
+
+        th,
+        td {
+          padding: 16px;
+          font-size: 16px;
+        }
+        tbody tr td {
+          border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:last-child td {
+          border-bottom: none; /* Remove border from last row */
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+          width: 350px;
+        }
+
+        button {
+          @include button-styles;
+          padding: 10px;
+          background-color: $dark-green-color;
+          color: #fff;
+          border-radius: 8px;
+          &:hover {
+            background-color: $green-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+.add-borrower-modal-content {
+  height: 380px;
+  width: 398px;
+  padding: 30px;
+
+  form {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 30px;
+    .text-input {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+
+      label {
+        font-size: 14px;
+        font-weight: 400;
+        color: $font-black-color;
+        line-height: 17px;
+      }
+
+      input {
+        @include text-input-styles;
+        padding: 10px 16px;
+        height: 50px;
+        font-size: 14px;
+      }
+    }
+
+    .buttons {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      row-gap: 15px;
+
+      button {
+        @include button-styles;
+        width: 100%;
+        height: 40px;
+      }
+
+      /* the first button within the buttons */
+      button:first-child {
+        background-color: $green-color;
+        color: #fff;
+
+        &:hover {
+          background-color: $dark-green-color;
+        }
+      }
+
+      /* the last button within the buttons */
+      button:last-child {
+        background-color: #fff;
+        border: 1px solid $border-color;
+        color: $font-black-color;
+        opacity: 0.8;
+        &:hover {
+          background-color: #e5e5e5;
+        }
+      }
+    }
+  }
+}
