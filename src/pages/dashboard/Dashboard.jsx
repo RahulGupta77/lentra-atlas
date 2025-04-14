@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Modal from "../../components/primitives/Modal";
 import { updateIsModalOpen } from "../../redux/overlayElementsSlice";
+import { addCustomer } from "../../services/dashboardService";
 import "./Dashboard.scss";
 
 // Inner content of Modal. ie inputs, buttons, etc
@@ -22,7 +23,20 @@ const AddBorrowerModalContent = ({ closeModalHandler }) => {
       return;
     }
 
+    // Check if borrower_id is a valid 10-digit number
+    const isValidPhone = /^\d{10}$/.test(borrower_id);
+    if (!isValidPhone) {
+      toast.error("Customer phone number must be a valid 10-digit number!");
+      return;
+    }
+
     try {
+      const response = await addCustomer(borrower_name, borrower_id);
+
+      if (response.status !== 201) {
+        throw new Error("Error while login!!");
+      }
+
       toast.success("New borrower added successfully");
       handleModalClose();
     } catch (error) {
@@ -79,6 +93,31 @@ const AddBorrowerModalContent = ({ closeModalHandler }) => {
 const Dashboard = () => {
   const [isAddBorrowerModalOpen, setIsAddBorrowerModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [allcustomers, setAllCustomers] = useState([]);
+
+  // useEffect(() => {
+  //   const fetchCustomers = async () => {
+  //     try {
+  //       const token = localStorage.getItem("access_token");
+  //       if (!token) {
+  //         toast.error("Unauthorized: No token found");
+  //         return;
+  //       }
+  //       const response = await getAllCustomer();
+
+  //       setAllCustomers(response.data);
+  //       toast.success("Fetched customers successfully!");
+  //     } catch (error) {
+  //       console.error("Failed to fetch customers", error);
+  //       toast.error(
+  //         error?.response?.data?.error ||
+  //           "Something went wrong while fetching customers"
+  //       );
+  //     }
+  //   };
+
+  //   fetchCustomers();
+  // }, []);
 
   return (
     <div

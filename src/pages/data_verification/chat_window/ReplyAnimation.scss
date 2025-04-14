@@ -1,0 +1,49 @@
+@use "../../../styles/variables.scss" as *;
+
+.jumping-dots span {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  animation: jump 1s infinite;
+  display: inline-block;
+}
+
+.jumping-dots .dot-1 {
+  background-color: $green-color;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation-delay: 200ms;
+}
+
+.jumping-dots .dot-2 {
+  background-color: $green-color;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation-delay: 400ms;
+}
+
+.jumping-dots .dot-3 {
+  background-color: $green-color;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation-delay: 600ms;
+}
+
+@keyframes jump {
+  0% {
+    bottom: 0px;
+  }
+  20% {
+    bottom: 5px;
+  }
+  40% {
+    bottom: 0px;
+    background-color: #72c1be;
+  }
+}

@@ -22,11 +22,19 @@ const Login = () => {
 
   const handleUserCredentialsSubmit = async (e) => {
     e.preventDefault();
-    const username = usernameRef.current.value;
-    const password = passwordRef.current.value;
+    const username = usernameRef.current.value.trim();
+    const password = passwordRef.current.value.trim();
 
-    if (!username.trim() || !password.trim()) {
+    // Check if any field is empty
+    if (!username || !password) {
       toast.error("All Fields are required!!");
+      return;
+    }
+
+    // Check if username is a valid 10-digit number
+    const isValidPhone = /^\d{10}$/.test(username);
+    if (!isValidPhone) {
+      toast.error("Username must be a valid 10-digit phone number!");
       return;
     }
 
@@ -34,7 +42,7 @@ const Login = () => {
     try {
       const response = await loginUserInServer(username, password);
 
-      if (!response.data.success) {
+      if (response.status !== 201) {
         throw new Error("Error while login!!");
       }
 
@@ -45,7 +53,7 @@ const Login = () => {
       navigate("/dashboard");
       toast.success("Sign-in successful!");
     } catch (error) {
-      toast.error(error.response.data.msg);
+      toast.error(error?.response?.data?.msg || "Something went wrong!");
       setLoading(false);
     }
   };
@@ -75,19 +83,19 @@ const Login = () => {
             {/* <h3>Hey, Enter your details to get sign in to your account</h3> */}
             <form onSubmit={handleUserCredentialsSubmit}>
               <div className="signin-input">
-                <label htmlFor="username-input">Username</label>
+                <label htmlFor="username-input">Phone Number</label>
                 <input
                   type="text"
                   id="username-input"
                   name="username-input"
-                  placeholder="Kreditmind"
+                  placeholder="956XXX69XX"
                   onKeyDown={(e) => handleNextInputFocus(e, "password-input")}
                   ref={usernameRef}
                 />
               </div>
 
               <div className="signin-input">
-                <label htmlFor="password-input">Password / OTP</label>
+                <label htmlFor="password-input">OTP</label>
                 <div className="password-input">
                   <input
                     type={showPassword ? "text" : "password"}

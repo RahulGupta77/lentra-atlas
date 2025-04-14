@@ -1,0 +1,32 @@
+@use "../../styles/variables.scss" as *;
+@use "../../styles/mixins.scss" as *;
+
+@mixin parent-box {
+  height: 90vh;
+  padding: 20px 55px;
+  margin-top: 10px;
+}
+
+@mixin child-box {
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: $primary-box-shadow;
+  border-radius: 20px;
+  padding: 25px 20px;
+}
+
+.main-content-data-verification {
+  @include parent-box;
+  width: 100%;
+  display: flex;
+  column-gap: 20px;
+  justify-content: center;
+}
+
+.chat-window-box,
+.file-details-box {
+  @include child-box;
+  flex: 0 0 45%; // <-- key line to fix width behavior
+  max-width: 45%;
+  min-width: 45%;
+}

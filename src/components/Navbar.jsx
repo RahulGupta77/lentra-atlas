@@ -45,7 +45,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className={`navbar ${isCompanyInsightsOpen ? "no-shadow" : ""}`}>
+    <div className={`navbar `}>
       <div className="logo">
         <img src={logo} alt="Atlas AI logo" />
       </div>
