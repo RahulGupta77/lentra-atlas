@@ -10,9 +10,9 @@ import Typewriter from "typewriter-effect";
 //   fetchChatHistoryFromServer,
 //   sendUserQueryToAiModelOnServer,
 // } from "../../services/chatService";
-// import { convertToIST, scrollToBottom } from "../../utils/chatBotMethods";
 import { FiImage } from "react-icons/fi";
 import { Tooltip } from "react-tooltip";
+import { convertToIST, scrollToBottom } from "../../../utils/chatBotMethods";
 import "./ChatWindow.scss";
 import ReplyAnimation from "./ReplyAnimation";
 
@@ -109,9 +109,7 @@ const AiChatBubble = ({
         </div>
 
         {created_at && (
-          <div className="chat-time-indicator">
-            {"convertToIST(created_at)"}
-          </div>
+          <div className="chat-time-indicator">{convertToIST(created_at)}</div>
         )}
       </div>
     </div>
@@ -140,28 +138,9 @@ const sampleChatMessages = [
     created_at: "2025-04-14T10:02:10Z",
   },
   {
-    message_content: {
-      type: "file",
-      name: "feedback_notes.pdf",
-      url: "https://example.com/files/feedback_notes.pdf",
-    },
-    role: "ai",
-    intent: "share",
-    created_at: "2025-04-14T10:03:45Z",
-  },
-  {
     message_content: "Here's a pic from yesterday's team outing!",
     role: "user",
     created_at: "2025-04-14T10:04:30Z",
-  },
-  {
-    message_content: {
-      type: "image",
-      name: "team_outing.jpg",
-      url: "https://source.unsplash.com/300x200/?team",
-    },
-    role: "user",
-    created_at: "2025-04-14T10:05:15Z",
   },
   {
     message_content: "Thanks for sharing! Everyone looks happy!",
@@ -170,28 +149,9 @@ const sampleChatMessages = [
     created_at: "2025-04-14T10:06:10Z",
   },
   {
-    message_content: {
-      type: "file",
-      name: "summary_report.xlsx",
-      url: "https://example.com/files/summary_report.xlsx",
-    },
-    role: "ai",
-    intent: "inform",
-    created_at: "2025-04-14T10:07:00Z",
-  },
-  {
     message_content: "Awesome. I'll take a look at it.",
     role: "user",
     created_at: "2025-04-14T10:08:20Z",
-  },
-  {
-    message_content: {
-      type: "image",
-      name: "weekend_chill.jpg",
-      url: "https://source.unsplash.com/300x200/?relax",
-    },
-    role: "user",
-    created_at: "2025-04-14T10:09:50Z",
   },
 ];
 
@@ -201,6 +161,7 @@ const ChatWindow = () => {
     useState(sampleChatMessages);
   const [lenderCurrentChat, setLenderCurrentChat] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [textInput, setTextInput] = useState("");
   const [newNotification, setNewNotification] = useState({
     chatViewType: "",
     totalNewMessages: 0,
@@ -208,24 +169,58 @@ const ChatWindow = () => {
   const [agentId] = useState("data_verification");
 
   const { id } = useParams();
-
-  // Internal ref for chat container
   const chatContainerScrollRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
-    let intervalId;
-    intervalId = setInterval(() => {
-      //   scrollToBottom(chatContainerScrollRef);
+    let intervalId = setInterval(() => {
+      scrollToBottom(chatContainerScrollRef);
     }, 500);
 
     if (!isAnimating) {
       clearInterval(intervalId);
       inputRef?.current?.focus();
-      //   scrollToBottom(chatContainerScrollRef);
+      scrollToBottom(chatContainerScrollRef);
     }
+
     return () => clearInterval(intervalId);
   }, [isAnimating]);
+
+  // Auto-scroll to bottom on new chat
+  useEffect(() => {
+    chatContainerScrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollToBottom(chatContainerScrollRef);
+  }, [lenderCurrentChat]);
+
+  const handleSendMessage = () => {
+    if (textInput.trim()) {
+      const userMessage = {
+        message_content: textInput.trim(),
+        role: "user",
+        created_at: new Date().toISOString(),
+      };
+      setLenderCurrentChat((prev) => [...prev, userMessage]);
+      setTextInput("");
+    }
+  };
+
+  const handleFileUpload = (file) => {
+    const url = URL.createObjectURL(file);
+    const fileType = file.type.startsWith("image/") ? "image" : "file";
+
+    const fileMessage = {
+      message_content: {
+        type: fileType,
+        url: url,
+        name: file.name,
+      },
+      role: "user",
+      created_at: new Date().toISOString(),
+    };
+
+    setLenderCurrentChat((prev) => [...prev, fileMessage]);
+    scrollToBottom(chatContainerScrollRef);
+  };
 
   return (
     <div className={`chat-window visible`}>
@@ -243,7 +238,6 @@ const ChatWindow = () => {
             ({ message_content, role, created_at, intent }, index) => {
               const key = created_at + index;
 
-              // Render function for media or text
               const renderMessageContent = () => {
                 if (typeof message_content === "string") {
                   return (
@@ -253,11 +247,12 @@ const ChatWindow = () => {
 
                 if (message_content.type === "image") {
                   return (
-                    <div className="user-chat-media">
+                    <div className="user-chat-media ">
                       <img
                         src={message_content.url}
                         alt={message_content.name}
                         className="chat-image-preview"
+                        onLoad={() => scrollToBottom(chatContainerScrollRef)}
                       />
                       <div className="file-name">{message_content.name}</div>
                     </div>
@@ -287,7 +282,7 @@ const ChatWindow = () => {
                   <div key={key} className="user-chat-box">
                     {renderMessageContent()}
                     <div className="chat-time-indicator user-time-indicator">
-                      {/* {convertToIST(created_at)} */}
+                      {convertToIST(created_at)}
                     </div>
                   </div>
                 );
@@ -330,6 +325,17 @@ const ChatWindow = () => {
             type="text"
             placeholder="Type your query here..."
             className="chat-input"
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (
+                e.key === "Enter" &&
+                !isWaitingForAiResponse &&
+                !isAnimating
+              ) {
+                handleSendMessage();
+              }
+            }}
             disabled={isWaitingForAiResponse || isAnimating}
           />
 
@@ -350,8 +356,7 @@ const ChatWindow = () => {
             onChange={(e) => {
               const file = e.target.files[0];
               if (file) {
-                console.log("Uploaded file:", file);
-                // handleFileUpload(file); // your file handling logic
+                handleFileUpload(file);
               }
             }}
           />
@@ -364,11 +369,13 @@ const ChatWindow = () => {
             }
             data-tooltip-id="file-icon-tooltip"
             data-tooltip-content={"Send"}
+            onClick={handleSendMessage}
           >
             <IoSend />
           </span>
         </div>
       </div>
+
       <Tooltip
         id="file-icon-tooltip"
         style={{

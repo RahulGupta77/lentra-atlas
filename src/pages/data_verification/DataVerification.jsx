@@ -5,9 +5,7 @@ import ChatWindow from "./chat_window/ChatWindow";
 const DataVerification = () => {
   return (
     <div className="main-content-data-verification">
-      <div className="chat-window-box">
-        <ChatWindow />
-      </div>
+      <ChatWindow />
 
       <div className="file-details-box"></div>
     </div>
