@@ -129,6 +129,38 @@ $chat-window-height: calc(#{$chat-window-base-height} * 100vh / 978);
     display: flex;
     flex-direction: column;
 
+    /* Image Message */
+    .user-chat-media {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      margin-top: 0.5rem;
+    }
+
+    .chat-image-preview {
+      max-width: 200px;
+      border-radius: 10px;
+      margin-bottom: 0.25rem;
+    }
+
+    /* File Message */
+    .user-chat-file .file-link {
+      display: inline-block;
+      text-decoration: none;
+      color: #0066cc;
+      background: #f1f1f1;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    /* File Name */
+    .file-name {
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 4px;
+    }
+
     .timestamp {
       display: flex;
       justify-content: center;

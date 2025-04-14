@@ -43,14 +43,14 @@ const AiChatBubble = ({
               onInit={(typewriter) => {
                 typewriter
                   .changeDelay(15)
-                  .typeString(text)
+                  .typeString(typeof text === "string" ? text : "")
                   .callFunction(() => {
                     setIsAnimating(false);
                   })
                   .start();
               }}
             />
-          ) : (
+          ) : typeof text === "string" ? (
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -83,6 +83,28 @@ const AiChatBubble = ({
             >
               {text}
             </ReactMarkdown>
+          ) : (
+            <div className="ai-chat-media">
+              {text.type === "file" ? (
+                <a
+                  href={text.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="file-link"
+                >
+                  📄 {text.name}
+                </a>
+              ) : text.type === "image" ? (
+                <>
+                  <img
+                    src={text.url}
+                    alt={text.name}
+                    className="chat-image-preview"
+                  />
+                  <div className="file-name">{text.name}</div>
+                </>
+              ) : null}
+            </div>
           )}
         </div>
 
@@ -96,9 +118,87 @@ const AiChatBubble = ({
   );
 };
 
+const sampleChatMessages = [
+  {
+    message_content: "Hey! Did you check the latest update?",
+    role: "user",
+    created_at: "2025-04-14T10:00:00Z",
+  },
+  {
+    message_content: {
+      type: "image",
+      name: "coffee_break.jpg",
+      url: "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg",
+    },
+    role: "user",
+    created_at: "2025-04-14T10:01:30Z",
+  },
+  {
+    message_content: "Yes, everything looks good. Just a few suggestions.",
+    role: "ai",
+    intent: "respond",
+    created_at: "2025-04-14T10:02:10Z",
+  },
+  {
+    message_content: {
+      type: "file",
+      name: "feedback_notes.pdf",
+      url: "https://example.com/files/feedback_notes.pdf",
+    },
+    role: "ai",
+    intent: "share",
+    created_at: "2025-04-14T10:03:45Z",
+  },
+  {
+    message_content: "Here's a pic from yesterday's team outing!",
+    role: "user",
+    created_at: "2025-04-14T10:04:30Z",
+  },
+  {
+    message_content: {
+      type: "image",
+      name: "team_outing.jpg",
+      url: "https://source.unsplash.com/300x200/?team",
+    },
+    role: "user",
+    created_at: "2025-04-14T10:05:15Z",
+  },
+  {
+    message_content: "Thanks for sharing! Everyone looks happy!",
+    role: "ai",
+    intent: "comment",
+    created_at: "2025-04-14T10:06:10Z",
+  },
+  {
+    message_content: {
+      type: "file",
+      name: "summary_report.xlsx",
+      url: "https://example.com/files/summary_report.xlsx",
+    },
+    role: "ai",
+    intent: "inform",
+    created_at: "2025-04-14T10:07:00Z",
+  },
+  {
+    message_content: "Awesome. I'll take a look at it.",
+    role: "user",
+    created_at: "2025-04-14T10:08:20Z",
+  },
+  {
+    message_content: {
+      type: "image",
+      name: "weekend_chill.jpg",
+      url: "https://source.unsplash.com/300x200/?relax",
+    },
+    role: "user",
+    created_at: "2025-04-14T10:09:50Z",
+  },
+];
+
 const ChatWindow = () => {
   const [isWaitingForAiResponse, setIsWaitingForAiResponse] = useState(false);
-  const [lenderChatHistory, setLenderChatHistory] = useState([]);
+  const [lenderChatHistory, setLenderChatHistory] =
+    useState(sampleChatMessages);
   const [lenderCurrentChat, setLenderCurrentChat] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [newNotification, setNewNotification] = useState({
@@ -132,86 +232,94 @@ const ChatWindow = () => {
       <h2 className="title" style={{ textAlign: "center" }}>
         Chat with Atlas
       </h2>
-      {/* <p className="sub-title">
-        Connect with your loan assistant for personalised support and expert
-        guidance
-      </p> */}
+      <p className="sub-title" style={{ textAlign: "center" }}>
+        Upload any financial document — Atlas will automatically analyze,
+        classify, and process it with precision.
+      </p>
 
-      <div
-        className={
-          "chat-content "
-          // +(isChatFeatureDisabled && "blur-content")
-        }
-      >
-        {/* <div className="timestamp">
-          <span></span> <p>Today</p> <span></span>
-        </div> */}
-
+      <div className="chat-content">
         <>
-          {lenderChatHistory.map(
+          {[...lenderChatHistory, ...lenderCurrentChat].map(
             ({ message_content, role, created_at, intent }, index) => {
-              return role === "user" ? (
-                <div key={created_at + index} className="user-chat-box">
-                  <div className="user-chat-text">{message_content}</div>
-                  <div className="chat-time-indicator user-time-indicator">
-                    {/* {convertToIST(created_at)} */}
+              const key = created_at + index;
+
+              // Render function for media or text
+              const renderMessageContent = () => {
+                if (typeof message_content === "string") {
+                  return (
+                    <div className="user-chat-text">{message_content}</div>
+                  );
+                }
+
+                if (message_content.type === "image") {
+                  return (
+                    <div className="user-chat-media">
+                      <img
+                        src={message_content.url}
+                        alt={message_content.name}
+                        className="chat-image-preview"
+                      />
+                      <div className="file-name">{message_content.name}</div>
+                    </div>
+                  );
+                }
+
+                if (message_content.type === "file") {
+                  return (
+                    <div className="user-chat-file">
+                      <a
+                        href={message_content.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="file-link"
+                      >
+                        📄 {message_content.name}
+                      </a>
+                    </div>
+                  );
+                }
+
+                return null;
+              };
+
+              if (role === "user") {
+                return (
+                  <div key={key} className="user-chat-box">
+                    {renderMessageContent()}
+                    <div className="chat-time-indicator user-time-indicator">
+                      {/* {convertToIST(created_at)} */}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <AiChatBubble
-                  key={created_at + index}
-                  text={message_content}
-                  intent={intent}
-                  created_at={created_at}
-                />
-              );
+                );
+              } else {
+                const isLast =
+                  index ===
+                  [...lenderChatHistory, ...lenderCurrentChat].length - 1;
+
+                return (
+                  <AiChatBubble
+                    key={key}
+                    text={message_content}
+                    intent={intent}
+                    created_at={created_at}
+                    isAnimating={isLast ? isAnimating : undefined}
+                    setIsAnimating={isLast ? setIsAnimating : undefined}
+                    performTypingAnimation={isLast}
+                  />
+                );
+              }
             }
           )}
 
-          {lenderCurrentChat.map(
-            ({ message_content, role, created_at, intent }, index) => {
-              return role === "user" ? (
-                <div key={created_at + index} className="user-chat-box">
-                  <div className="user-chat-text">{message_content}</div>
-                  <div className="chat-time-indicator user-time-indicator">
-                    {/* {convertToIST(created_at)} */}
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {index === lenderCurrentChat.length - 1 ? (
-                    <AiChatBubble
-                      key={created_at + index}
-                      isAnimating={isAnimating}
-                      setIsAnimating={setIsAnimating}
-                      performTypingAnimation={true}
-                      text={message_content}
-                      intent={intent}
-                      created_at={created_at}
-                    />
-                  ) : (
-                    <AiChatBubble
-                      key={created_at}
-                      text={message_content}
-                      intent={intent}
-                      created_at={created_at}
-                    />
-                  )}
-                </>
-              );
-            }
+          {isWaitingForAiResponse && (
+            <AiChatBubble
+              ReplyAnimationComponent={ReplyAnimation}
+              isWaitingForAiResponse={isWaitingForAiResponse}
+            />
           )}
+
+          <div ref={chatContainerScrollRef} />
         </>
-
-        {isWaitingForAiResponse && (
-          <AiChatBubble
-            ReplyAnimationComponent={ReplyAnimation}
-            isWaitingForAiResponse={isWaitingForAiResponse}
-          />
-        )}
-
-        {/* Empty div for automatically scrolling to bottom */}
-        <div ref={chatContainerScrollRef} />
       </div>
 
       <div className="chat-input-box">
