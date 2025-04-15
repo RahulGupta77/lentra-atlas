@@ -141,7 +141,7 @@ const Dashboard = () => {
               }
             </Modal>
           )}
-          <input type="text" placeholder="Search..." />
+          <input type="text" disabled={true} placeholder="Search..." />
         </div>
         <div className="main-content-table">
           <table>
@@ -177,7 +177,16 @@ const Dashboard = () => {
                 </>
               ) : (
                 <tr>
-                  <td>No Customers to Show</td>
+                  <td
+                    colSpan="4"
+                    style={{
+                      textAlign: "center",
+                      padding: "20px",
+                      fontSize: "18px",
+                    }}
+                  >
+                    No customers found.
+                  </td>
                 </tr>
               )}
             </tbody>

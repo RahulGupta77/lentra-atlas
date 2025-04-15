@@ -49,53 +49,23 @@ const ParsedDataWindow = () => {
     };
   }, [id]);
 
-  // Recursive component to render nested data
-  const RenderNestedData = ({ data, level = 0 }) => {
-    // Handle null, undefined, or non-object primitives
-    if (data === null || data === undefined) {
-      return <span className="text-gray-500">N/A</span>;
-    }
-
-    if (typeof data !== "object") {
-      return <span className="text-blue-600">{String(data)}</span>;
-    }
-
-    // Handle arrays
-    if (Array.isArray(data)) {
-      return (
-        <div className={`ml-${level * 4}`}>
-          {data.map((item, index) => (
-            <div key={index} className="mb-2">
-              <span className="font-semibold text-gray-700">
-                [Item {index}]
-              </span>
-              <RenderNestedData data={item} level={level + 1} />
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // Handle objects
-    return (
-      <div className={`ml-${level * 4}`}>
-        {Object.entries(data).map(([key, value]) => (
-          <div key={key} className="mb-2">
-            <span className="font-semibold text-gray-700">{key}: </span>
-            <RenderNestedData data={value} level={level + 1} />
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   return (
-    <div className="p-4">
-      <h2 className="text-lg font-bold mb-4">Parsed Data</h2>
+    <div>
+      <h2>Parsed Data</h2>
       {documentData.length > 0 ? (
         <DocumentViewer documents={documentData} />
       ) : (
-        <p className="text-gray-500">No data available</p>
+        <p
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: "20px",
+            height: "300px",
+          }}
+        >
+          No data available
+        </p>
       )}
     </div>
   );

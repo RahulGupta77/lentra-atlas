@@ -26,7 +26,8 @@
 .chat-window-box,
 .file-details-box {
   @include child-box;
-  flex: 0 0 45%; // <-- key line to fix width behavior
+  flex: 0 0 45%;
   max-width: 45%;
   min-width: 45%;
+  overflow: scroll;
 }

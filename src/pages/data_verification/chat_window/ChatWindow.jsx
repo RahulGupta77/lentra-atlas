@@ -5,6 +5,7 @@ import { IoSend } from "react-icons/io5";
 import { MdErrorOutline } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
 import { useParams } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import remarkGfm from "remark-gfm";
 import Typewriter from "typewriter-effect";
 // import {
@@ -212,6 +213,7 @@ const ChatWindow = () => {
         ...prev,
         response.data.data.llm_response,
       ]);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error sending message:", error);
       setLenderCurrentChat((prev) => [
@@ -225,6 +227,8 @@ const ChatWindow = () => {
           intent: "error",
         },
       ]);
+
+      setIsLoading(false);
     }
   };
 
@@ -251,8 +255,7 @@ const ChatWindow = () => {
     scrollToBottom(chatContainerScrollRef);
 
     const response = await send_file_to_llm(id, file);
-
-    console.log(response);
+    setIsLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -414,42 +417,62 @@ const ChatWindow = () => {
                 !isWaitingForAiResponse &&
                 !isAnimating
               ) {
+                setIsLoading(true);
                 handleSendMessage();
               }
             }}
-            disabled={isWaitingForAiResponse || isAnimating}
+            disabled={isLoading}
           />
 
-          {/* File upload icon */}
-          <label
-            htmlFor="image-upload"
-            className="file-input-icon file-upload-icon"
-            data-tooltip-id="file-icon-tooltip"
-            data-tooltip-content={"Upload files"}
-          >
-            <FiImage />
-          </label>
-          <input
-            id="image-upload"
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            ref={fileInputRef}
-            onChange={handleInputChange}
-          />
+          {isLoading ? (
+            <div
+              className="spinner-container"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginLeft: "10px",
+              }}
+            >
+              <ClipLoader size={26} color="#3a9391" />
+            </div>
+          ) : (
+            <>
+              <label
+                htmlFor="image-upload"
+                className="file-input-icon file-upload-icon"
+                data-tooltip-id="file-icon-tooltip"
+                data-tooltip-content={"Upload files"}
+              >
+                <FiImage />
+              </label>
+              <input
+                id="image-upload"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                disabled={isLoading}
+                ref={fileInputRef}
+                onChange={(e) => {
+                  setIsLoading(true);
+                  handleInputChange(e);
+                }}
+              />
 
-          {/* Send button */}
-          <span
-            className={
-              "input-icon " +
-              ((isWaitingForAiResponse || isAnimating) && "disabled")
-            }
-            data-tooltip-id="file-icon-tooltip"
-            data-tooltip-content={"Send"}
-            onClick={() => handleSendMessage()}
-          >
-            <IoSend />
-          </span>
+              {/* Send button */}
+              <span
+                className={"input-icon"}
+                data-tooltip-id="file-icon-tooltip"
+                data-tooltip-content={"Send"}
+                onClick={() => {
+                  if (isLoading) return;
+                  setIsLoading(true);
+                  handleSendMessage();
+                }}
+              >
+                <IoSend />
+              </span>
+            </>
+          )}
         </div>
       </div>
 
