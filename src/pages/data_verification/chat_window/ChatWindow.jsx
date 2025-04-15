@@ -280,7 +280,27 @@ const ChatWindow = () => {
     // Bind to the pan_number_extraction event
     channel.bind("chat_lentra_poc", (payload) => {
       try {
-        console.log("chat-payload", payload);
+        const {
+          created_at,
+          intent,
+          message_content,
+          message_receiver,
+          message_sender,
+          message_type,
+          uuid,
+        } = payload;
+
+        const ai_response = {
+          content: message_content,
+          sender: message_sender,
+          receiver: message_receiver,
+          created_at: created_at,
+          type: message_type,
+          uuid: uuid,
+          intent: intent,
+        };
+
+        setLenderCurrentChat((prev) => [...prev, ai_response]);
       } catch (error) {
         console.error("Error processing Pusher payload:", error.message);
       }
