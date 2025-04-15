@@ -12,6 +12,10 @@ import Typewriter from "typewriter-effect";
 // } from "../../services/chatService";
 import { FiImage } from "react-icons/fi";
 import { Tooltip } from "react-tooltip";
+import {
+  get_user_chat_history,
+  send_message_to_llm,
+} from "../../../services/chatService";
 import { convertToIST, scrollToBottom } from "../../../utils/chatBotMethods";
 import "./ChatWindow.scss";
 import ReplyAnimation from "./ReplyAnimation";
@@ -116,49 +120,9 @@ const AiChatBubble = ({
   );
 };
 
-const sampleChatMessages = [
-  {
-    message_content: "Hey! Did you check the latest update?",
-    role: "user",
-    created_at: "2025-04-14T10:00:00Z",
-  },
-  {
-    message_content: {
-      type: "image",
-      name: "coffee_break.jpg",
-      url: "https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg",
-    },
-    role: "user",
-    created_at: "2025-04-14T10:01:30Z",
-  },
-  {
-    message_content: "Yes, everything looks good. Just a few suggestions.",
-    role: "ai",
-    intent: "respond",
-    created_at: "2025-04-14T10:02:10Z",
-  },
-  {
-    message_content: "Here's a pic from yesterday's team outing!",
-    role: "user",
-    created_at: "2025-04-14T10:04:30Z",
-  },
-  {
-    message_content: "Thanks for sharing! Everyone looks happy!",
-    role: "ai",
-    intent: "comment",
-    created_at: "2025-04-14T10:06:10Z",
-  },
-  {
-    message_content: "Awesome. I'll take a look at it.",
-    role: "user",
-    created_at: "2025-04-14T10:08:20Z",
-  },
-];
-
 const ChatWindow = () => {
   const [isWaitingForAiResponse, setIsWaitingForAiResponse] = useState(false);
-  const [lenderChatHistory, setLenderChatHistory] =
-    useState(sampleChatMessages);
+  const [lenderChatHistory, setLenderChatHistory] = useState([]);
   const [lenderCurrentChat, setLenderCurrentChat] = useState([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [textInput, setTextInput] = useState("");
@@ -167,10 +131,42 @@ const ChatWindow = () => {
     totalNewMessages: 0,
   });
   const [agentId] = useState("data_verification");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const { id } = useParams();
   const chatContainerScrollRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    const getChatHistory = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await get_user_chat_history(id);
+        if (response.data.status === "success") {
+          const reversedHistory = response.data.data.chat_history.reverse();
+          setLenderChatHistory(reversedHistory);
+        } else {
+          throw new Error(
+            response.data.error || "Failed to fetch chat history"
+          );
+        }
+      } catch (err) {
+        console.error("Error fetching chat history:", err);
+        setError(
+          err.message || "An error occurred while fetching chat history"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      getChatHistory();
+    }
+  }, [id]);
 
   useEffect(() => {
     let intervalId = setInterval(() => {
@@ -186,21 +182,47 @@ const ChatWindow = () => {
     return () => clearInterval(intervalId);
   }, [isAnimating]);
 
-  // Auto-scroll to bottom on new chat
   useEffect(() => {
     chatContainerScrollRef.current?.scrollIntoView({ behavior: "smooth" });
     scrollToBottom(chatContainerScrollRef);
   }, [lenderCurrentChat]);
 
-  const handleSendMessage = () => {
-    if (textInput.trim()) {
-      const userMessage = {
-        message_content: textInput.trim(),
-        role: "user",
-        created_at: new Date().toISOString(),
-      };
-      setLenderCurrentChat((prev) => [...prev, userMessage]);
-      setTextInput("");
+  const handleSendMessage = async () => {
+    if (!textInput.trim()) return;
+
+    const userMessage = {
+      content: textInput,
+      sender: "user",
+      created_at: new Date().toISOString().slice(0, 19).replace("Z", ""),
+      type: "text",
+      uuid: crypto.randomUUID(),
+      intent: "user_query",
+    };
+
+    setLenderCurrentChat((prev) => [...prev, userMessage]);
+    setTextInput("");
+
+    try {
+      const response = await send_message_to_llm(id, textInput);
+      console.log("API Response:", response);
+      console.log("LLM Response:", response.data.data.llm_response);
+      setLenderCurrentChat((prev) => [
+        ...prev,
+        response.data.data.llm_response,
+      ]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setLenderCurrentChat((prev) => [
+        ...prev,
+        {
+          content: "Failed to get response. Please try again.",
+          sender: "system",
+          created_at: new Date().toISOString().slice(0, 19).replace("Z", ""),
+          type: "error",
+          uuid: crypto.randomUUID(),
+          intent: "error",
+        },
+      ]);
     }
   };
 
@@ -222,6 +244,8 @@ const ChatWindow = () => {
     scrollToBottom(chatContainerScrollRef);
   };
 
+  scrollToBottom(chatContainerScrollRef);
+
   return (
     <div className={`chat-window visible`}>
       <h2 className="title" style={{ textAlign: "center" }}>
@@ -235,41 +259,27 @@ const ChatWindow = () => {
       <div className="chat-content">
         <>
           {[...lenderChatHistory, ...lenderCurrentChat].map(
-            ({ message_content, role, created_at, intent }, index) => {
-              const key = created_at + index;
+            (
+              { content, receiver, sender, type, uuid, created_at, intent },
+              index
+            ) => {
+              const key = uuid;
 
               const renderMessageContent = () => {
-                if (typeof message_content === "string") {
-                  return (
-                    <div className="user-chat-text">{message_content}</div>
-                  );
+                if (type === "text") {
+                  return <div className="user-chat-text">{content}</div>;
                 }
 
-                if (message_content.type === "image") {
+                if (type === "image") {
                   return (
                     <div className="user-chat-media ">
                       <img
-                        src={message_content.url}
-                        alt={message_content.name}
+                        src={content}
+                        alt={"file_name"}
                         className="chat-image-preview"
                         onLoad={() => scrollToBottom(chatContainerScrollRef)}
                       />
-                      <div className="file-name">{message_content.name}</div>
-                    </div>
-                  );
-                }
-
-                if (message_content.type === "file") {
-                  return (
-                    <div className="user-chat-file">
-                      <a
-                        href={message_content.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="file-link"
-                      >
-                        📄 {message_content.name}
-                      </a>
+                      <div className="file-name">{"file.jpg"}</div>
                     </div>
                   );
                 }
@@ -277,7 +287,7 @@ const ChatWindow = () => {
                 return null;
               };
 
-              if (role === "user") {
+              if (sender === "user") {
                 return (
                   <div key={key} className="user-chat-box">
                     {renderMessageContent()}
@@ -294,7 +304,7 @@ const ChatWindow = () => {
                 return (
                   <AiChatBubble
                     key={key}
-                    text={message_content}
+                    text={content}
                     intent={intent}
                     created_at={created_at}
                     isAnimating={isLast ? isAnimating : undefined}
@@ -369,7 +379,7 @@ const ChatWindow = () => {
             }
             data-tooltip-id="file-icon-tooltip"
             data-tooltip-content={"Send"}
-            onClick={handleSendMessage}
+            onClick={() => handleSendMessage()}
           >
             <IoSend />
           </span>
