@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import Pusher from "pusher-js";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const ParsedDataWindow = () => {
   const [data, setData] = useState("");
+  const { id } = useParams();
 
   useEffect(() => {
     // Enable Pusher logging - disable this in production
