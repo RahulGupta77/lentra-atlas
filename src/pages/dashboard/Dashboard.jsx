@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Modal from "../../components/primitives/Modal";
 import { updateIsModalOpen } from "../../redux/overlayElementsSlice";
-import { addCustomer } from "../../services/dashboardService";
+import { addCustomer, getAllCustomer } from "../../services/dashboardService";
 import "./Dashboard.scss";
 
 // Inner content of Modal. ie inputs, buttons, etc
-const AddBorrowerModalContent = ({ closeModalHandler }) => {
+const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
   const dispatch = useDispatch();
 
   const handleBorrowerInfoSubmit = async (e) => {
@@ -37,6 +37,7 @@ const AddBorrowerModalContent = ({ closeModalHandler }) => {
         throw new Error("Error while login!!");
       }
 
+      setAllCustomers((prev) => [...prev, response.data]);
       toast.success("New borrower added successfully");
       handleModalClose();
     } catch (error) {
@@ -95,29 +96,27 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [allcustomers, setAllCustomers] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchCustomers = async () => {
-  //     try {
-  //       const token = localStorage.getItem("access_token");
-  //       if (!token) {
-  //         toast.error("Unauthorized: No token found");
-  //         return;
-  //       }
-  //       const response = await getAllCustomer();
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          toast.error("Unauthorized: No token found");
+          return;
+        }
+        const response = await getAllCustomer();
+        setAllCustomers(response.data.customer_users);
+      } catch (error) {
+        console.error("Failed to fetch customers", error);
+        toast.error(
+          error?.response?.data?.error ||
+            "Something went wrong while fetching customers"
+        );
+      }
+    };
 
-  //       setAllCustomers(response.data);
-  //       toast.success("Fetched customers successfully!");
-  //     } catch (error) {
-  //       console.error("Failed to fetch customers", error);
-  //       toast.error(
-  //         error?.response?.data?.error ||
-  //           "Something went wrong while fetching customers"
-  //       );
-  //     }
-  //   };
-
-  //   fetchCustomers();
-  // }, []);
+    fetchCustomers();
+  }, []);
 
   return (
     <div
@@ -137,7 +136,7 @@ const Dashboard = () => {
               {
                 <AddBorrowerModalContent
                   closeModalHandler={() => setIsAddBorrowerModalOpen(false)}
-                  setOriginalAllBorrowersDetails={[]}
+                  setAllCustomers={setAllCustomers}
                 />
               }
             </Modal>
@@ -149,26 +148,38 @@ const Dashboard = () => {
             <thead>
               <tr>
                 <th>Customer Name</th>
-                <th>Created On</th>
+                <th>Phone Number</th>
                 <th></th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              <tr key={"uuid"}>
-                <td style={{ textTransform: "capitalize" }}>
-                  {"Omkar Deshpande"}
-                </td>
-                <td>24th April 2025</td>
-                <td>
-                  <button
-                    onClick={() => navigate(`/dashboard/123`)}
-                    style={{ width: "234px" }}
-                  >
-                    Data Verification
-                  </button>
-                </td>
-              </tr>
+              {allcustomers.length ? (
+                <>
+                  {allcustomers.map((customer) => (
+                    <tr key={customer.uuid}>
+                      <td style={{ textTransform: "capitalize" }}>
+                        {customer.name}
+                      </td>
+                      <td>{customer.phone_number}</td>
+                      <td>
+                        <button
+                          onClick={() =>
+                            navigate(`/dashboard/${customer.uuid}`)
+                          }
+                          style={{ width: "234px" }}
+                        >
+                          Data Verification
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </>
+              ) : (
+                <tr>
+                  <td>No Customers to Show</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
