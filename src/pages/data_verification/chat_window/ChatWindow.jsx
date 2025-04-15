@@ -1,3 +1,4 @@
+import Pusher from "pusher-js";
 import { useEffect, useRef, useState } from "react";
 import { FiMessageSquare } from "react-icons/fi";
 import { IoSend } from "react-icons/io5";
@@ -14,6 +15,7 @@ import { FiImage } from "react-icons/fi";
 import { Tooltip } from "react-tooltip";
 import {
   get_user_chat_history,
+  send_file_to_llm,
   send_message_to_llm,
 } from "../../../services/chatService";
 import { convertToIST, scrollToBottom } from "../../../utils/chatBotMethods";
@@ -134,10 +136,12 @@ const ChatWindow = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [trigger, setTrigger] = useState(false);
+
   const { id } = useParams();
   const chatContainerScrollRef = useRef(null);
   const inputRef = useRef(null);
-
+  const fileInputRef = useRef(null);
   useEffect(() => {
     const getChatHistory = async () => {
       setIsLoading(true);
@@ -226,25 +230,69 @@ const ChatWindow = () => {
     }
   };
 
-  const handleFileUpload = (file) => {
+  const handleFileUpload = async (file) => {
+    if (!file.type.startsWith("image/")) {
+      console.error("Only image files are allowed.");
+      return;
+    }
+
+    console.log(file);
+
     const url = URL.createObjectURL(file);
-    const fileType = file.type.startsWith("image/") ? "image" : "file";
 
     const fileMessage = {
-      message_content: {
-        type: fileType,
-        url: url,
-        name: file.name,
-      },
-      role: "user",
-      created_at: new Date().toISOString(),
+      uuid: crypto.randomUUID(),
+      content: url,
+      created_at: new Date().toISOString().slice(0, 19).replace("Z", ""),
+      type: "image",
+      sender: "user",
+      receiver: "model",
+      intent: "parse image request",
+      file_name: file.name,
     };
 
     setLenderCurrentChat((prev) => [...prev, fileMessage]);
     scrollToBottom(chatContainerScrollRef);
+
+    const response = await send_file_to_llm(id, file);
+
+    console.log(response);
   };
 
-  scrollToBottom(chatContainerScrollRef);
+  const handleInputChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleFileUpload(file, fileInputRef);
+    }
+  };
+
+  useEffect(() => {
+    // Enable Pusher logging - disable this in production
+    // Pusher.logToConsole = true;
+
+    // Initialize Pusher
+    const pusher = new Pusher("9867b5a5cb231094924f", {
+      cluster: "ap2",
+    });
+
+    const channel = pusher.subscribe(id);
+
+    // Bind to the pan_number_extraction event
+    channel.bind("chat_lentra_poc", (payload) => {
+      try {
+        console.log("chat-payload", payload);
+      } catch (error) {
+        console.error("Error processing Pusher payload:", error.message);
+      }
+    });
+
+    // Cleanup function to unsubscribe and disconnect
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+      pusher.disconnect();
+    };
+  }, [id]);
 
   return (
     <div className={`chat-window visible`}>
@@ -259,27 +307,34 @@ const ChatWindow = () => {
       <div className="chat-content">
         <>
           {[...lenderChatHistory, ...lenderCurrentChat].map(
-            (
-              { content, receiver, sender, type, uuid, created_at, intent },
-              index
-            ) => {
-              const key = uuid;
+            (singleChat, index) => {
+              const key = singleChat.uuid;
 
               const renderMessageContent = () => {
-                if (type === "text") {
-                  return <div className="user-chat-text">{content}</div>;
+                if (singleChat.type === "text") {
+                  return (
+                    <div className="user-chat-text">{singleChat.content}</div>
+                  );
                 }
 
-                if (type === "image") {
+                if (singleChat.type === "image") {
                   return (
                     <div className="user-chat-media ">
                       <img
-                        src={content}
-                        alt={"file_name"}
+                        src={singleChat.content}
+                        alt={
+                          singleChat.file_name
+                            ? singleChat.file_name
+                            : singleChat.content.split("/").pop().split("?")[0]
+                        }
                         className="chat-image-preview"
                         onLoad={() => scrollToBottom(chatContainerScrollRef)}
                       />
-                      <div className="file-name">{"file.jpg"}</div>
+                      <div className="file-name">
+                        {singleChat.file_name
+                          ? singleChat.file_name
+                          : singleChat.content.split("/").pop().split("?")[0]}
+                      </div>
                     </div>
                   );
                 }
@@ -287,12 +342,12 @@ const ChatWindow = () => {
                 return null;
               };
 
-              if (sender === "user") {
+              if (singleChat.sender === "user") {
                 return (
                   <div key={key} className="user-chat-box">
                     {renderMessageContent()}
                     <div className="chat-time-indicator user-time-indicator">
-                      {convertToIST(created_at)}
+                      {convertToIST(singleChat.created_at)}
                     </div>
                   </div>
                 );
@@ -304,9 +359,9 @@ const ChatWindow = () => {
                 return (
                   <AiChatBubble
                     key={key}
-                    text={content}
-                    intent={intent}
-                    created_at={created_at}
+                    text={singleChat.content}
+                    intent={singleChat.intent}
+                    created_at={singleChat.created_at}
                     isAnimating={isLast ? isAnimating : undefined}
                     setIsAnimating={isLast ? setIsAnimating : undefined}
                     performTypingAnimation={isLast}
@@ -363,12 +418,8 @@ const ChatWindow = () => {
             type="file"
             accept="image/*"
             style={{ display: "none" }}
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) {
-                handleFileUpload(file);
-              }
-            }}
+            ref={fileInputRef}
+            onChange={handleInputChange}
           />
 
           {/* Send button */}
