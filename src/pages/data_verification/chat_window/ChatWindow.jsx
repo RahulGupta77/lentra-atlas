@@ -208,8 +208,6 @@ const ChatWindow = () => {
 
     try {
       const response = await send_message_to_llm(id, textInput);
-      console.log("API Response:", response);
-      console.log("LLM Response:", response.data.data.llm_response);
       setLenderCurrentChat((prev) => [
         ...prev,
         response.data.data.llm_response,
@@ -235,8 +233,6 @@ const ChatWindow = () => {
       console.error("Only image files are allowed.");
       return;
     }
-
-    console.log(file);
 
     const url = URL.createObjectURL(file);
 

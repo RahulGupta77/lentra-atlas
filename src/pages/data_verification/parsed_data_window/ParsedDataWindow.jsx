@@ -1,10 +1,24 @@
 import Pusher from "pusher-js";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { get_document_meta_data } from "../../../services/ParsedDataWindowService";
+import DocumentViewer from "./DocumentViewer";
 
 const ParsedDataWindow = () => {
   const [data, setData] = useState("");
   const { id } = useParams();
+
+  const [documentData, setDocumentData] = useState([]);
+  const [trigger, setTrigger] = useState(false);
+
+  useEffect(() => {
+    const fetchDocumentsFromServer = async () => {
+      const response = await get_document_meta_data(id);
+      setDocumentData(response.data);
+    };
+
+    fetchDocumentsFromServer();
+  }, [trigger]);
 
   useEffect(() => {
     const pusher = new Pusher("9867b5a5cb231094924f", {
@@ -17,9 +31,11 @@ const ParsedDataWindow = () => {
     channel.bind("parsed_data_lentra_poc", (payload) => {
       try {
         console.log("Raw payload:", JSON.stringify(payload, null, 2));
-        // Normalize payload to always work with an array
-        const normalizedData = Array.isArray(payload) ? payload : [payload];
-        setData(normalizedData);
+        const { status } = payload;
+
+        if (status) {
+          setTrigger((prev) => !prev);
+        }
       } catch (error) {
         console.error("Error processing Pusher payload:", error.message);
       }
@@ -76,13 +92,8 @@ const ParsedDataWindow = () => {
   return (
     <div className="p-4">
       <h2 className="text-lg font-bold mb-4">Parsed Data</h2>
-      {data.length > 0 ? (
-        data.map((item, index) => (
-          <div key={index} className="mb-4 p-4 border rounded bg-gray-50">
-            <h3 className="font-semibold">Entry {index + 1}</h3>
-            <RenderNestedData data={item} level={0} />
-          </div>
-        ))
+      {documentData.length > 0 ? (
+        <DocumentViewer documents={documentData} />
       ) : (
         <p className="text-gray-500">No data available</p>
       )}
