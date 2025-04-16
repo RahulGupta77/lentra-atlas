@@ -1,0 +1,52 @@
+@use "../styles/mixins.scss" as *;
+@use "../styles/variables.scss" as *;
+
+.sidebar-container {
+  background-color: $green-color;
+  border-radius: 16px;
+  //   position: fixed;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .icon-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .icon-wrapper {
+    height: 56px;
+    width: 56px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &.primary {
+      background-color: #ffffff;
+      color: #3a9391;
+    }
+
+    &.secondary {
+      background-color: rgba(248, 248, 248, 0.1);
+      color: #ffffff;
+      &:hover {
+        background-color: #4fbebc;
+      }
+    }
+  }
+
+  .logout-wrapper {
+    .icon-wrapper {
+      margin-top: auto;
+    }
+  }
+
+  .icon {
+    height: 24px;
+    width: 24px;
+  }
+}

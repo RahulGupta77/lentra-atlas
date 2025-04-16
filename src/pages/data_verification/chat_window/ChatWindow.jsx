@@ -193,7 +193,10 @@ const ChatWindow = () => {
   }, [lenderCurrentChat]);
 
   const handleSendMessage = async () => {
-    if (!textInput.trim()) return;
+    if (!textInput.trim()) {
+      setIsLoading(false);
+      return;
+    }
 
     const userMessage = {
       content: textInput,
@@ -235,6 +238,7 @@ const ChatWindow = () => {
   const handleFileUpload = async (file) => {
     if (!file.type.startsWith("image/")) {
       console.error("Only image files are allowed.");
+      setIsLoading(false);
       return;
     }
 
@@ -448,7 +452,7 @@ const ChatWindow = () => {
               <input
                 id="image-upload"
                 type="file"
-                accept="image/*"
+                accept=".jpg, .jpeg, .png, .webp"
                 style={{ display: "none" }}
                 disabled={isLoading}
                 ref={fileInputRef}

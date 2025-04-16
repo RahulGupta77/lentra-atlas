@@ -3,7 +3,7 @@
 
 @mixin parent-box {
   height: 90vh;
-  padding: 20px 55px;
+  padding: 20px 20px;
   margin-top: 10px;
 }
 
@@ -19,7 +19,7 @@
   @include parent-box;
   width: 100%;
   display: flex;
-  column-gap: 20px;
+  column-gap: 40px;
   justify-content: center;
 }
 
