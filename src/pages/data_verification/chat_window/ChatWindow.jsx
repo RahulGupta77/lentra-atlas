@@ -153,6 +153,7 @@ const ChatWindow = () => {
         if (response.data.status === "success") {
           const reversedHistory = response.data.data.chat_history.reverse();
           setLenderChatHistory(reversedHistory);
+          scrollToBottom(chatContainerScrollRef);
         } else {
           throw new Error(
             response.data.error || "Failed to fetch chat history"
@@ -165,6 +166,7 @@ const ChatWindow = () => {
         );
       } finally {
         setIsLoading(false);
+        scrollToBottom(chatContainerScrollRef);
       }
     };
 
