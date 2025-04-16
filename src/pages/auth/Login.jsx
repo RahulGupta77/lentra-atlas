@@ -42,9 +42,16 @@ const Login = () => {
     try {
       const response = await loginUserInServer(username, password);
 
-      if (response.status !== 201) {
-        throw new Error("Error while login!!");
+      if (response.status === 401) {
+        const message = response?.response?.data?.error;
+        toast.error(message || "Phone Number is not Authorized");
+        setLoading(false);
+        return;
       }
+
+      // if (response.status !== 201) {
+      //   throw new Error("Error while login!!");
+      // }
 
       localStorage.setItem("access_token", response.data.access_token);
       usernameRef.current.value = "";

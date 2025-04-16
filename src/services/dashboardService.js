@@ -8,8 +8,7 @@ export const addCustomer = async (name, phone_number) => {
     });
     return response;
   } catch (error) {
-    console.error(error.response.data.msg);
-    throw error;
+    return error;
   }
 };
 
@@ -18,7 +17,6 @@ export const getAllCustomer = async () => {
     const response = await apiClient.get("/customers/users");
     return response;
   } catch (error) {
-    console.error(error.response.data.msg);
-    throw error;
+    return error;
   }
 };

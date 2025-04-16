@@ -8,8 +8,7 @@ export const send_message_to_llm = async (user_uuid, message) => {
     });
     return response;
   } catch (error) {
-    console.error(error.response.data.msg);
-    throw error;
+    return error;
   }
 };
 
@@ -26,8 +25,7 @@ export const send_file_to_llm = async (user_uuid, file) => {
     });
     return response;
   } catch (error) {
-    console.error(error.response?.data?.msg || error.message);
-    throw error;
+    return error;
   }
 };
 
@@ -38,7 +36,6 @@ export const get_user_chat_history = async (user_uuid) => {
     );
     return response;
   } catch (error) {
-    console.error(error.response.data.msg);
-    throw error;
+    return error;
   }
 };
