@@ -23,11 +23,18 @@
   justify-content: center;
 }
 
-.chat-window-box,
 .file-details-box {
   @include child-box;
-  flex: 0 0 45%;
-  max-width: 45%;
-  min-width: 45%;
+  flex: 0 0 48%;
+  max-width: 48%;
+  min-width: 48%;
   overflow: scroll;
+  height: 66vh;
+}
+
+.main-content-data-verification-subbox {
+  display: flex;
+  flex-direction: column;
+
+  row-gap: 20px;
 }

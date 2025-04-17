@@ -331,10 +331,10 @@ const ChatWindow = () => {
       <h2 className="title" style={{ textAlign: "center" }}>
         Chat with Atlas
       </h2>
-      <p className="sub-title" style={{ textAlign: "center" }}>
+      {/* <p className="sub-title" style={{ textAlign: "center" }}>
         Upload any financial document — Atlas will automatically analyze,
         classify, and process it with precision.
-      </p>
+      </p> */}
 
       <div className="chat-content">
         <>

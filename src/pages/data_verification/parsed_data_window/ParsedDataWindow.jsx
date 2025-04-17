@@ -50,7 +50,7 @@ const ParsedDataWindow = () => {
 
   return (
     <div>
-      <h2>Parsed Data</h2>
+      <h3 style={{ marginLeft: "10px" }}>Parsed Data</h3>
       {documentData.length > 0 ? (
         <DocumentViewer documents={documentData} />
       ) : (

@@ -2,6 +2,7 @@ import React from "react";
 import { Sidebar } from "../../components/Sidebar";
 import "./DataVerification.scss";
 import ChatWindow from "./chat_window/ChatWindow";
+import DocumentChecklist from "./document_checklist/DocumentChecklist";
 import ParsedDataWindow from "./parsed_data_window/ParsedDataWindow";
 
 const DataVerification = () => {
@@ -9,10 +10,21 @@ const DataVerification = () => {
     <div className="main-content-data-verification">
       <Sidebar />
 
-      <ChatWindow />
+      <div className="main-content-data-verification-subbox">
+        <DocumentChecklist />
 
-      <div className="file-details-box">
-        <ParsedDataWindow />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <ChatWindow />
+
+          <div className="file-details-box">
+            <ParsedDataWindow />
+          </div>
+        </div>
       </div>
     </div>
   );

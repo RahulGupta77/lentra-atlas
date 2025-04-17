@@ -1,0 +1,67 @@
+.document-card {
+  width: 230px;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .doc-type {
+      font-weight: 600;
+      color: #434c5c;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+
+  .date {
+    font-size: 12px;
+    margin-top: 8px;
+    color: #555;
+  }
+
+  &.verified {
+    background-color: #e6f8ec;
+    border: 1px solid #4caf502e;
+  }
+
+  &.pending {
+    background-color: #fef3e4ad;
+    border: 1px solid #af934c58;
+  }
+
+  &.issues {
+    background-color: #ef6f6f2e;
+    border: 1px solid #eaa0a07c;
+  }
+
+  &.skip {
+    background-color: #eaeaea83;
+    border: 1px solid #b3b3b3a3;
+  }
+
+  .label-verified {
+    color: #4caf50;
+  }
+
+  .label-pending {
+    color: #ff9900;
+  }
+
+  .label-issues {
+    color: #d32f2f;
+  }
+
+  .label-skip {
+    color: #4f585bdf;
+  }
+}

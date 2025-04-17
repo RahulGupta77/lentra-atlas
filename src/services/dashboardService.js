@@ -20,3 +20,12 @@ export const getAllCustomer = async () => {
     return error;
   }
 };
+
+export const getAllDocsStatus = async (user_uuid) => {
+  try {
+    const response = await apiClient.get("/documents/status/" + user_uuid);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
