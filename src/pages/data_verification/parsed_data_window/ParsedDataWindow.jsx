@@ -30,7 +30,6 @@ const ParsedDataWindow = () => {
     // Bind to the parsed_data_lentra_poc event
     channel.bind("parsed_data_lentra_poc", (payload) => {
       try {
-        console.log("Raw payload:", JSON.stringify(payload, null, 2));
         const { status } = payload;
 
         if (status) {

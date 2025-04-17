@@ -34,7 +34,7 @@ const Login = () => {
     // Check if username is a valid 10-digit number
     const isValidPhone = /^\d{10}$/.test(username);
     if (!isValidPhone) {
-      toast.error("Username must be a valid 10-digit phone number!");
+      toast.error("Please enter a valid 10-digit phone number.");
       return;
     }
 

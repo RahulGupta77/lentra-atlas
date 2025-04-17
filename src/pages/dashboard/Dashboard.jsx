@@ -62,7 +62,7 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
     <div className="add-borrower-modal-content">
       <form onSubmit={handleBorrowerInfoSubmit}>
         <div className="text-input">
-          <label htmlFor="borrower-name">Customer Name</label>
+          <label htmlFor="borrower-name">Customer First Name</label>
           <input
             name="borrower_name"
             id="borrower_name"
@@ -147,7 +147,7 @@ const Dashboard = () => {
           <table>
             <thead>
               <tr>
-                <th>Customer Name</th>
+                <th>Customer First Name</th>
                 <th>Phone Number</th>
                 <th></th>
                 <th></th>

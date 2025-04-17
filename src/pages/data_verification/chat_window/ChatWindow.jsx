@@ -238,8 +238,9 @@ const ChatWindow = () => {
   };
 
   const handleFileUpload = async (file) => {
-    if (!file.type.startsWith("image/")) {
-      console.error("Only image files are allowed.");
+    // Check if the file is an image or PDF
+    if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
+      console.error("Only image and PDF files are allowed.");
       setIsLoading(false);
       return;
     }
@@ -250,17 +251,23 @@ const ChatWindow = () => {
       uuid: crypto.randomUUID(),
       content: url,
       created_at: new Date().toISOString().slice(0, 19).replace("Z", ""),
-      type: "image",
+      type: file.type.startsWith("image/") ? "image" : "pdf",
       sender: "user",
       receiver: "model",
-      intent: "parse image request",
+      intent: file.type.startsWith("image/")
+        ? "parse image request"
+        : "parse pdf request",
       file_name: file.name,
     };
 
     setLenderCurrentChat((prev) => [...prev, fileMessage]);
     scrollToBottom(chatContainerScrollRef);
 
-    const response = await send_file_to_llm(id, file);
+    const response = await send_file_to_llm(
+      id,
+      file,
+      file.type.startsWith("image/") ? "image" : "pdf"
+    );
     setIsLoading(false);
   };
 
@@ -344,7 +351,7 @@ const ChatWindow = () => {
 
                 if (singleChat.type === "image") {
                   return (
-                    <div className="user-chat-media ">
+                    <div className="user-chat-media">
                       <img
                         src={singleChat.content}
                         alt={
@@ -353,6 +360,28 @@ const ChatWindow = () => {
                             : singleChat.content.split("/").pop().split("?")[0]
                         }
                         className="chat-image-preview"
+                        onLoad={() => scrollToBottom(chatContainerScrollRef)}
+                      />
+                      <div className="file-name">
+                        {singleChat.file_name
+                          ? singleChat.file_name
+                          : singleChat.content.split("/").pop().split("?")[0]}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (singleChat.type === "pdf") {
+                  return (
+                    <div className="user-chat-media">
+                      <iframe
+                        src={singleChat.content}
+                        title={
+                          singleChat.file_name
+                            ? singleChat.file_name
+                            : singleChat.content.split("/").pop().split("?")[0]
+                        }
+                        className="chat-pdf-preview"
                         onLoad={() => scrollToBottom(chatContainerScrollRef)}
                       />
                       <div className="file-name">
@@ -454,7 +483,7 @@ const ChatWindow = () => {
               <input
                 id="image-upload"
                 type="file"
-                accept=".jpg, .jpeg, .png, .webp"
+                accept=".jpg, .jpeg, .png, .webp, .pdf"
                 style={{ display: "none" }}
                 disabled={isLoading}
                 ref={fileInputRef}
