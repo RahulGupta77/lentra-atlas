@@ -18,8 +18,8 @@ const statusMap = {
     icon: <FiAlertCircle size={16} />,
     className: "issues",
   },
-  SKIP: {
-    label: "Skipped",
+  SKIPPED: {
+    label: "SKIPPED",
     icon: <FiMinusCircle size={16} />,
     className: "skip",
   },
@@ -44,7 +44,9 @@ const DocumentCard = ({ documentType, status, created_at }) => {
           {statusInfo.label}
         </span>
       </div>
-      <p className="date">Uploaded {created_at}</p>
+      <p className="date">
+        {created_at ? `Uploaded ${created_at}` : "File Upload Pending"}
+      </p>
     </div>
   );
 };

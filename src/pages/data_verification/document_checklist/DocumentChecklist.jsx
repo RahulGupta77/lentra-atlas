@@ -7,39 +7,13 @@ import "./DocumentChecklist.scss";
 
 const DocumentChecklist = () => {
   const { id } = useParams();
-  const [docsChecklist, setDocsChecklist] = useState([
-    {
-      created_at: "17-April-2025",
-      document_type: "PAN",
-      status: "VERIFIED",
-    },
-    {
-      created_at: "17-April-2025",
-      document_type: "GST_CERT",
-      status: "PENDING",
-    },
-    {
-      created_at: "17-April-2025",
-      document_type: "UDYAM_CERT",
-      status: "VERIFIED",
-    },
-    {
-      created_at: "17-April-2025",
-      document_type: "EBILL",
-      status: "ISSUES",
-    },
-    {
-      created_at: "17-April-2025",
-      document_type: "BANK_STATEMENT",
-      status: "SKIP",
-    },
-  ]);
+  const [docsChecklist, setDocsChecklist] = useState([]);
 
   useEffect(() => {
     const fetchAllDocsStatus = async () => {
       const response = await getAllDocsStatus(id);
       if (response.status === 200) {
-        // setDocsChecklist(response?.data?.documents || []);
+        setDocsChecklist(response?.data?.documents || []);
       } else {
         toast.error("Unable to fetch Document Checklists");
       }
