@@ -5,7 +5,6 @@ import { get_document_meta_data } from "../../../services/ParsedDataWindowServic
 import DocumentViewer from "./DocumentViewer";
 
 const ParsedDataWindow = () => {
-  const [data, setData] = useState("");
   const { id } = useParams();
 
   const [documentData, setDocumentData] = useState([]);
@@ -18,7 +17,7 @@ const ParsedDataWindow = () => {
     };
 
     fetchDocumentsFromServer();
-  }, [trigger]);
+  }, [trigger, id]);
 
   useEffect(() => {
     const pusher = new Pusher("9867b5a5cb231094924f", {
@@ -49,7 +48,7 @@ const ParsedDataWindow = () => {
   }, [id]);
 
   return (
-    <div>
+    <div className="parsed-data-window">
       <h3 style={{ marginLeft: "10px" }}>Parsed Data</h3>
       {documentData.length > 0 ? (
         <DocumentViewer documents={documentData} />

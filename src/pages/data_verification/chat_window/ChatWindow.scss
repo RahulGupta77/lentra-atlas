@@ -13,7 +13,8 @@ $chat-window-height: calc(#{$chat-window-base-height} * 100vh / 978);
 .chat-window {
   top: 100px;
   height: 65vh;
-  width: 49%;
+  min-width: 49%;
+  max-width: 49%;
   background-color: #ffffff;
   border-radius: 20px;
   padding: 25px;
