@@ -1,13 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import Modal from "../../../components/primitives/Modal";
 import { getAllDocsStatus } from "../../../services/dashboardService";
+import AllChecklistModal from "./AllChecklistModal";
 import DocumentCard from "./DocumentCard";
 import "./DocumentChecklist.scss";
 
 const DocumentChecklist = ({ updateDocStatusTrigger }) => {
   const { id } = useParams();
   const [docsChecklist, setDocsChecklist] = useState([]);
+  const [isShowChecklistModalOpen, setIsShowChecklistModalOpen] =
+    useState(false);
+
+  const checklistData = {
+    cross_checks: {
+      EBILL_GST_ADDRESS: "Address match between E-Bill and GST certificate.",
+      EBILL_UDYAM_ADDRESS:
+        "Address match between E-Bill and Udyam certificate.",
+      PAN_EBILL_NAME: "Name match between PAN and E-BILL.",
+      PAN_USERNAME_CHECK: "Name match between PAN and Username.",
+      UDAYM_GST_ADDRESS:
+        "Address name match between Udyam certificate and GST.",
+      UDAYM_GST_COMPANY_NAME:
+        "Company's name match between Udyam and GST certificate.",
+    },
+  };
 
   useEffect(() => {
     const fetchAllDocsStatus = async () => {
@@ -24,8 +42,6 @@ const DocumentChecklist = ({ updateDocStatusTrigger }) => {
 
   const total = 5;
   const uploaded = docsChecklist.filter((doc) => doc.created_at).length;
-
-  // console.log(docsChecklist);
 
   return (
     <div className="document-checklist">
@@ -46,11 +62,26 @@ const DocumentChecklist = ({ updateDocStatusTrigger }) => {
             </p>
           </div>
 
-          {/* <div>
-            <button type="button" className="show-all-checks">
-              {"View All Current Checks"}
+          <div>
+            <button
+              onClick={() => setIsShowChecklistModalOpen(true)}
+              type="button"
+              className="show-all-checks"
+            >
+              {"View All Document Checks"}
             </button>
-          </div> */}
+
+            {isShowChecklistModalOpen && (
+              <Modal setIsModalOpen={setIsShowChecklistModalOpen}>
+                {
+                  <AllChecklistModal
+                    closeModalHandler={() => setIsShowChecklistModalOpen(false)}
+                    checklistData={checklistData}
+                  />
+                }
+              </Modal>
+            )}
+          </div>
         </div>
       </div>
 
