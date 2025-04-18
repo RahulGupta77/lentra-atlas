@@ -37,7 +37,7 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
         throw new Error("Error while login!!");
       }
 
-      setAllCustomers((prev) => [...prev, response.data]);
+      setAllCustomers((prev) => [response.data, ...prev]);
       toast.success("New borrower added successfully");
       handleModalClose();
     } catch (error) {

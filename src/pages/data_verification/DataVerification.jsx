@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import "./DataVerification.scss";
 import ChatWindow from "./chat_window/ChatWindow";
@@ -6,12 +6,14 @@ import DocumentChecklist from "./document_checklist/DocumentChecklist";
 import ParsedDataWindow from "./parsed_data_window/ParsedDataWindow";
 
 const DataVerification = () => {
+  const [updateDocStatusTrigger, setUpdateDocStatusTrigger] = useState(false);
+
   return (
     <div className="main-content-data-verification">
       <Sidebar />
 
       <div className="main-content-data-verification-subbox">
-        <DocumentChecklist />
+        <DocumentChecklist updateDocStatusTrigger={updateDocStatusTrigger} />
 
         <div
           style={{
@@ -19,7 +21,7 @@ const DataVerification = () => {
             justifyContent: "space-between",
           }}
         >
-          <ChatWindow />
+          <ChatWindow setUpdateDocStatusTrigger={setUpdateDocStatusTrigger} />
 
           <div className="file-details-box">
             <ParsedDataWindow />

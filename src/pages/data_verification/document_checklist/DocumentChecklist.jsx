@@ -5,7 +5,7 @@ import { getAllDocsStatus } from "../../../services/dashboardService";
 import DocumentCard from "./DocumentCard";
 import "./DocumentChecklist.scss";
 
-const DocumentChecklist = () => {
+const DocumentChecklist = ({ updateDocStatusTrigger }) => {
   const { id } = useParams();
   const [docsChecklist, setDocsChecklist] = useState([]);
 
@@ -20,14 +20,12 @@ const DocumentChecklist = () => {
     };
 
     fetchAllDocsStatus();
-  }, [id]);
+  }, [id, updateDocStatusTrigger]);
 
   const total = 5;
-  const uploaded = docsChecklist.filter(
-    (doc) => doc.status === "VERIFIED"
-  ).length;
+  const uploaded = docsChecklist.filter((doc) => doc.created_at).length;
 
-  console.log(docsChecklist);
+  // console.log(docsChecklist);
 
   return (
     <div className="document-checklist">
@@ -36,15 +34,23 @@ const DocumentChecklist = () => {
           <h3>Document Checklist</h3>
           <p>Required documents for verification</p>
         </div>
-        <div className="upload-progress">
-          <div className="circle">{`${Math.floor(
-            (uploaded / total) * 100
-          )}%`}</div>
-          <p>
-            {`${uploaded} of ${total}`}
-            <br />
-            Documents Verified
-          </p>
+        <div className="sub-header-2">
+          <div className="upload-progress">
+            <div className="circle">{`${Math.floor(
+              (uploaded / total) * 100
+            )}%`}</div>
+            <p>
+              {`${uploaded} of ${total}`}
+              <br />
+              Documents Uploaded
+            </p>
+          </div>
+
+          {/* <div>
+            <button type="button" className="show-all-checks">
+              {"View All Current Checks"}
+            </button>
+          </div> */}
         </div>
       </div>
 

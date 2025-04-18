@@ -11,6 +11,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 15px;
 
     h3 {
       font-size: 18px;
@@ -47,11 +48,33 @@
         line-height: 1.2;
       }
     }
+
+    .sub-header-2 {
+      display: flex;
+      align-items: center;
+      column-gap: 50px;
+
+      button {
+        padding: 8px 8px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 17px;
+        margin-top: 10px;
+        background-color: $green-color;
+        color: #ffffff;
+        &:hover {
+          background-color: $dark-green-color;
+        }
+        @include button-styles;
+        letter-spacing: 0px;
+      }
+    }
   }
 
   .docs-container {
     display: flex;
-    gap: 15px;
+    justify-content: space-between;
     margin-top: 10px;
     flex-wrap: wrap;
   }

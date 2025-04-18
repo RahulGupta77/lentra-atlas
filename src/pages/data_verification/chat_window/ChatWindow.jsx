@@ -123,7 +123,7 @@ const AiChatBubble = ({
   );
 };
 
-const ChatWindow = () => {
+const ChatWindow = ({ setUpdateDocStatusTrigger }) => {
   const [isWaitingForAiResponse, setIsWaitingForAiResponse] = useState(false);
   const [lenderChatHistory, setLenderChatHistory] = useState([]);
   const [lenderCurrentChat, setLenderCurrentChat] = useState([]);
@@ -268,6 +268,9 @@ const ChatWindow = () => {
       file,
       file.type.startsWith("image/") ? "image" : "pdf"
     );
+
+    setUpdateDocStatusTrigger((prev) => !prev);
+
     setIsLoading(false);
   };
 
