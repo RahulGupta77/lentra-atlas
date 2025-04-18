@@ -34,7 +34,7 @@ const formatLabel = (type) => {
 
 const DocumentCard = ({ documentType, status, created_at }) => {
   const statusInfo = statusMap[status] || {};
-  console.log(statusInfo, status);
+
   return (
     <div className={`document-card ${statusInfo.className}`}>
       <div className="top">
