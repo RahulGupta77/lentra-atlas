@@ -6,7 +6,6 @@ import "./AllChecklistModal.scss";
 
 const AllChecklistModal = ({ closeModalHandler, checklistData }) => {
   const dispatch = useDispatch();
-
   const handleModalClose = () => {
     dispatch(updateIsModalOpen(false));
     setTimeout(closeModalHandler, 300);
@@ -17,8 +16,8 @@ const AllChecklistModal = ({ closeModalHandler, checklistData }) => {
       <div className="checklist-content">
         <h4 className="checklist-title">All Document Checks</h4>
         <ul className="checklist-items">
-          {checklistData?.cross_checks &&
-            Object.values(checklistData.cross_checks).map((value, index) => (
+          {checklistData?.length &&
+            Object.values(checklistData).map((value, index) => (
               <li key={index} className="checklist-item">
                 <span
                   className="checklist-icon"

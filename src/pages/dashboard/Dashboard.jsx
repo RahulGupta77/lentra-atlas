@@ -52,7 +52,7 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
 
       setAllCustomers((prev) => [response.data, ...prev]);
       toast.success("New borrower added successfully");
-      // handleModalClose();
+      handleModalClose();
     } catch (error) {
       toast.error("Error while adding new borrower");
       console.error(error.message);

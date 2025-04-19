@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Modal from "../../../components/primitives/Modal";
 import { getAllDocsStatus } from "../../../services/dashboardService";
+import { getEnabledChecks } from "../../../services/getEnabledChecks";
 import AllChecklistModal from "./AllChecklistModal";
 import DocumentCard from "./DocumentCard";
 import "./DocumentChecklist.scss";
@@ -39,6 +40,16 @@ const DocumentChecklist = ({ updateDocStatusTrigger }) => {
 
     fetchAllDocsStatus();
   }, [id, updateDocStatusTrigger]);
+
+  useEffect(() => {
+    const getAllEnabledChecksFromServer = async () => {
+      const response = await getEnabledChecks(id);
+
+      console.log(response);
+    };
+
+    getAllEnabledChecksFromServer();
+  }, []);
 
   const total = 5;
   const uploaded = docsChecklist.filter((doc) => doc.created_at).length;
