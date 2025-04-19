@@ -2,17 +2,15 @@
 @use "../../../styles/mixins.scss" as *;
 
 .all-checklist-modal {
-  height: 450px;
-  width: 350px;
-  padding: 30px;
+  min-height: 450px;
+  width: 520px;
+  padding: 20px;
 }
 
 .all-checklist-modal {
   background: white;
   border-radius: 20px;
   padding: 20px;
-  max-width: 500px;
-  width: 100%;
   max-height: 80vh;
   overflow-y: auto;
 
@@ -38,7 +36,7 @@
 
       .checklist-item {
         padding: 10px;
-        background: $light-green-color;
+        // background: $light-green-color;
         border-radius: 10px;
 
         .check-description {

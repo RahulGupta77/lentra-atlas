@@ -133,16 +133,20 @@
 }
 
 .add-borrower-modal-content {
-  height: 380px;
-  width: 398px;
+  height: 520px; // Adjusted height for checklist
+  width: 458px;
   padding: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
   form {
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
-    row-gap: 30px;
+    row-gap: 20px;
+
     .text-input {
       display: flex;
       flex-direction: column;
@@ -150,7 +154,7 @@
 
       label {
         font-size: 14px;
-        font-weight: 400;
+        font-weight: 500;
         color: $font-black-color;
         line-height: 17px;
       }
@@ -160,6 +164,76 @@
         padding: 10px 16px;
         height: 50px;
         font-size: 14px;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          border-color: $green-color;
+          outline: none;
+        }
+      }
+    }
+
+    .checklist-section {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+
+      h3 {
+        font-size: 14px;
+        font-weight: 500;
+        color: $font-black-color;
+        margin: 0;
+        line-height: 17px;
+      }
+
+      .checklist {
+        max-height: 120px; // Reduced to fit within modal
+        overflow-y: auto;
+        border: 1px solid $border-color; // Matches input border
+        border-radius: 4px;
+        padding: 10px;
+
+        // Custom scrollbar for better UX
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+          background: #a1a1a1;
+        }
+
+        .checklist-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          font-size: 13px;
+          color: $font-black-color;
+          padding: 4px 0;
+
+          input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: $green-color;
+            cursor: pointer;
+          }
+
+          span {
+            flex: 1;
+            line-height: 16px;
+          }
+        }
       }
     }
 
@@ -168,14 +242,17 @@
       display: flex;
       flex-direction: column;
       row-gap: 15px;
+      margin-top: auto;
 
       button {
         @include button-styles;
         width: 100%;
         height: 40px;
+        font-size: 14px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
       }
 
-      /* the first button within the buttons */
       button:first-child {
         background-color: $green-color;
         color: #fff;
@@ -185,12 +262,12 @@
         }
       }
 
-      /* the last button within the buttons */
       button:last-child {
         background-color: #fff;
         border: 1px solid $border-color;
         color: $font-black-color;
         opacity: 0.8;
+
         &:hover {
           background-color: #e5e5e5;
         }

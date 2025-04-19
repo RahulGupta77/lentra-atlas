@@ -1,4 +1,5 @@
 import React from "react";
+import { FaCheck } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
 import { updateIsModalOpen } from "../../../redux/overlayElementsSlice";
 import "./AllChecklistModal.scss";
@@ -19,6 +20,16 @@ const AllChecklistModal = ({ closeModalHandler, checklistData }) => {
           {checklistData?.cross_checks &&
             Object.values(checklistData.cross_checks).map((value, index) => (
               <li key={index} className="checklist-item">
+                <span
+                  className="checklist-icon"
+                  style={{
+                    color: "green",
+                    marginRight: "10px",
+                    fontSize: "18px",
+                  }}
+                >
+                  <FaCheck />
+                </span>
                 <span className="check-description">{value}</span>
               </li>
             ))}

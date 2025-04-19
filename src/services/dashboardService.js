@@ -1,10 +1,13 @@
 import apiClient from "./apiClient";
 
-export const addCustomer = async (name, phone_number) => {
+export const addCustomer = async (name, phone_number, checks) => {
+  console.log(checks);
+
   try {
     const response = await apiClient.post("/customers/users", {
       name,
       phone_number,
+      checks,
     });
     return response;
   } catch (error) {

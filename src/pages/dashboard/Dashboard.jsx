@@ -11,10 +11,20 @@ import "./Dashboard.scss";
 const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
   const dispatch = useDispatch();
 
+  const crossChecks = {
+    EBILL_GST_ADDRESS: "Address match between E-Bill and GST certificate.",
+    EBILL_UDYAM_ADDRESS: "Address match between E-Bill and Udyam certificate.",
+    PAN_EBILL_NAME: "Name match between PAN and E-BILL.",
+    PAN_USERNAME_CHECK: "Name match between PAN and Username.",
+    UDAYM_GST_ADDRESS: "Address name match between Udyam certificate and GST.",
+    UDAYM_GST_COMPANY_NAME:
+      "Company's name match between Udyam and GST certificate.",
+  };
+
   const handleBorrowerInfoSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const { borrower_name, borrower_id } = Object.fromEntries(
+    const { borrower_name, borrower_id, ...checks } = Object.fromEntries(
       formData.entries()
     );
 
@@ -23,7 +33,6 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
       return;
     }
 
-    // Check if borrower_id is a valid 10-digit number
     const isValidPhone = /^\d{10}$/.test(borrower_id);
     if (!isValidPhone) {
       toast.error("Customer phone number must be a valid 10-digit number!");
@@ -31,15 +40,19 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
     }
 
     try {
-      const response = await addCustomer(borrower_name, borrower_id);
+      const response = await addCustomer(
+        borrower_name,
+        borrower_id,
+        Object.keys(checks)
+      );
 
       if (response.status !== 201) {
-        throw new Error("Error while login!!");
+        throw new Error("Error while adding customer!");
       }
 
       setAllCustomers((prev) => [response.data, ...prev]);
       toast.success("New borrower added successfully");
-      handleModalClose();
+      // handleModalClose();
     } catch (error) {
       toast.error("Error while adding new borrower");
       console.error(error.message);
@@ -78,6 +91,18 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
             type="text"
             onKeyDown={handleKeyDown}
           />
+        </div>
+
+        <div className="checklist-section">
+          <h3>Verification Checks Applied</h3>
+          <div className="checklist">
+            {Object.entries(crossChecks).map(([key, description]) => (
+              <label key={key} className="checklist-item">
+                <input defaultChecked type="checkbox" name={key} value={key} />
+                <span>{description}</span>
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="buttons">
