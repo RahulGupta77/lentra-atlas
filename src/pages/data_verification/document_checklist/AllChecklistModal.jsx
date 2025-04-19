@@ -16,7 +16,7 @@ const AllChecklistModal = ({ closeModalHandler, checklistData }) => {
       <div className="checklist-content">
         <h4 className="checklist-title">All Document Checks</h4>
         <ul className="checklist-items">
-          {checklistData?.length &&
+          {checklistData?.length ? (
             Object.values(checklistData).map((value, index) => (
               <li key={index} className="checklist-item">
                 <span
@@ -31,7 +31,10 @@ const AllChecklistModal = ({ closeModalHandler, checklistData }) => {
                 </span>
                 <span className="check-description">{value}</span>
               </li>
-            ))}
+            ))
+          ) : (
+            <div className="no-checks-applied">No Checks Applied</div>
+          )}
         </ul>
         <button className="close-button" onClick={handleModalClose}>
           Close
