@@ -16,7 +16,7 @@ const AllChecklistModal = ({ closeModalHandler, checklistData }) => {
       <div className="checklist-content">
         <h4 className="checklist-title">All Document Checks</h4>
         <ul className="checklist-items">
-          {checklistData?.length ? (
+          {Object.values(checklistData)?.length ? (
             Object.values(checklistData).map((value, index) => (
               <li key={index} className="checklist-item">
                 <span

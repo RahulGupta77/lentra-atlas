@@ -13,43 +13,51 @@ const DocumentChecklist = ({ updateDocStatusTrigger }) => {
   const [docsChecklist, setDocsChecklist] = useState([]);
   const [isShowChecklistModalOpen, setIsShowChecklistModalOpen] =
     useState(false);
+  const [enabledChecklist, setEnabledChecklist] = useState(null);
 
-  const checklistData = {
-    cross_checks: {
-      EBILL_GST_ADDRESS: "Address match between E-Bill and GST certificate.",
-      EBILL_UDYAM_ADDRESS:
-        "Address match between E-Bill and Udyam certificate.",
-      PAN_EBILL_NAME: "Name match between PAN and E-BILL.",
-      PAN_USERNAME_CHECK: "Name match between PAN and Username.",
-      UDAYM_GST_ADDRESS:
-        "Address name match between Udyam certificate and GST.",
-      UDAYM_GST_COMPANY_NAME:
-        "Company's name match between Udyam and GST certificate.",
-    },
-  };
-
+  // Fetch document status
   useEffect(() => {
     const fetchAllDocsStatus = async () => {
-      const response = await getAllDocsStatus(id);
-      if (response.status === 200) {
-        setDocsChecklist(response?.data?.documents || []);
-      } else {
-        toast.error("Unable to fetch Document Checklists");
+      try {
+        const response = await getAllDocsStatus(id);
+        if (response.status === 200) {
+          setDocsChecklist(response?.data?.documents || []);
+        } else {
+          toast.error("Failed to fetch document checklist. Please try again.");
+          console.error("Error fetching document status:", response);
+        }
+      } catch (error) {
+        toast.error("Something went wrong while fetching document checklist.");
+        console.error("Exception in fetchAllDocsStatus:", error);
       }
     };
 
-    fetchAllDocsStatus();
+    if (id) {
+      fetchAllDocsStatus();
+    }
   }, [id, updateDocStatusTrigger]);
 
+  // Fetch enabled checks
   useEffect(() => {
     const getAllEnabledChecksFromServer = async () => {
-      const response = await getEnabledChecks(id);
-
-      console.log(response);
+      try {
+        const response = await getEnabledChecks(id);
+        if (response.status === 200) {
+          setEnabledChecklist(response?.data?.checks || {});
+        } else {
+          toast.error("Failed to fetch enabled checks.");
+          console.error("Error fetching enabled checks:", response);
+        }
+      } catch (error) {
+        toast.error("Something went wrong while fetching enabled checks.");
+        console.error("Exception in getAllEnabledChecksFromServer:", error);
+      }
     };
 
-    getAllEnabledChecksFromServer();
-  }, []);
+    if (id) {
+      getAllEnabledChecksFromServer();
+    }
+  }, [id]);
 
   const total = 5;
   const uploaded = docsChecklist.filter((doc) => doc.created_at).length;
@@ -87,7 +95,7 @@ const DocumentChecklist = ({ updateDocStatusTrigger }) => {
                 {
                   <AllChecklistModal
                     closeModalHandler={() => setIsShowChecklistModalOpen(false)}
-                    checklistData={checklistData}
+                    checklistData={enabledChecklist}
                   />
                 }
               </Modal>
