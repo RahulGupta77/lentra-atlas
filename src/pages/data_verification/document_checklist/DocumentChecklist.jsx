@@ -60,7 +60,9 @@ const DocumentChecklist = ({ updateDocStatusTrigger }) => {
   }, [id]);
 
   const total = 5;
-  const uploaded = docsChecklist.filter((doc) => doc.created_at).length;
+  const uploaded = docsChecklist.filter(
+    (doc) => doc.status === "VERIFIED"
+  ).length;
 
   return (
     <div className="document-checklist">
@@ -77,7 +79,7 @@ const DocumentChecklist = ({ updateDocStatusTrigger }) => {
             <p>
               {`${uploaded} of ${total}`}
               <br />
-              Documents Uploaded
+              Documents Verified
             </p>
           </div>
 

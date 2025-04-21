@@ -1,0 +1,28 @@
+@use "../../../styles/variables.scss" as *;
+@use "../../../styles/mixins.scss" as *;
+
+.parsed-data-window {
+  .parsed-data-window-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 10px;
+
+    button {
+      @include button-styles;
+      padding: 8px 8px;
+      border-radius: 8px;
+      width: 150px;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 17px;
+      margin-top: 10px;
+      background-color: $green-color;
+      color: #ffffff;
+      &:hover {
+        background-color: $dark-green-color;
+      }
+      letter-spacing: 0px;
+    }
+  }
+}

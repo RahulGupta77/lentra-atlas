@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { get_document_meta_data } from "../../../services/ParsedDataWindowService";
 import DocumentViewer from "./DocumentViewer";
+import "./ParsedDataWindow.scss";
 
 const ParsedDataWindow = () => {
   const { id } = useParams();
@@ -49,7 +50,10 @@ const ParsedDataWindow = () => {
 
   return (
     <div className="parsed-data-window">
-      <h3 style={{ marginLeft: "10px" }}>Parsed Data</h3>
+      <div className="parsed-data-window-header">
+        <h2>Parsed Data</h2>
+        <button>Submit Data</button>
+      </div>
       {documentData.length > 0 ? (
         <DocumentViewer documents={documentData} />
       ) : (
