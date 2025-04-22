@@ -24,7 +24,7 @@ const DataVerification = () => {
           <ChatWindow setUpdateDocStatusTrigger={setUpdateDocStatusTrigger} />
 
           <div className="file-details-box">
-            <ParsedDataWindow />
+            <ParsedDataWindow updateDocStatusTrigger={updateDocStatusTrigger} />
           </div>
         </div>
       </div>

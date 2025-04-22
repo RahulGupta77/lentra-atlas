@@ -6,10 +6,12 @@ import ProtectComponent from "./components/ProtectComponent";
 import Login from "./pages/auth/Login.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import DataVerification from "./pages/data_verification/DataVerification.jsx";
+import SuccessPage from "./pages/SuccessPage/SuccessPage.jsx";
 import store from "./redux/store.js";
 
 const ProtectedDashboard = ProtectComponent(Dashboard);
 const ProtectedDataVerification = ProtectComponent(DataVerification);
+const ProtectedSuccessPage = ProtectComponent(SuccessPage);
 
 const appRouter = createBrowserRouter([
   {
@@ -27,6 +29,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/dashboard/:id",
         element: <ProtectedDataVerification />,
+      },
+      {
+        path: "/success/:id",
+        element: <ProtectedSuccessPage />,
       },
     ],
     errorElement: <div>Error Page</div>,

@@ -189,9 +189,13 @@ const Dashboard = () => {
                       <td>{customer.phone_number}</td>
                       <td>
                         <button
-                          onClick={() =>
-                            navigate(`/dashboard/${customer.uuid}`)
-                          }
+                          onClick={() => {
+                            if (customer.is_submitted) {
+                              navigate(`/success/${customer.uuid}`);
+                            } else {
+                              navigate(`/dashboard/${customer.uuid}`);
+                            }
+                          }}
                           style={{ width: "234px" }}
                         >
                           Data Verification
