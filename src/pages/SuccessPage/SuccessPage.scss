@@ -1,8 +1,95 @@
-.success-page {
-  height: 100%;
-  width: 100%;
+@use "../../styles/variables.scss" as *;
+@use "../../styles/mixins.scss" as *;
 
+.success-page {
   display: flex;
-  justify-content: center;
-  align-items: center;
+
+  .success-sidebar {
+    height: 85vh;
+    display: flex;
+    margin: 40px 0px 0px 10px;
+  }
+
+  .container {
+    width: 80vw;
+    margin: 40px auto;
+    padding: 1.5rem;
+    background-color: #f5f5f5;
+    font-family: "Inter", sans-serif;
+    border-radius: 20px;
+  }
+
+  .card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .main-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 1.5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .list {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+  }
+
+  .list-item {
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title.blue {
+    color: #1e3a8a;
+  }
+  .section-title.green {
+    color: #065f46;
+  }
+  .section-title.orange {
+    color: #b45309;
+  }
+  .section-title.red {
+    color: #991b1b;
+  }
+
+  .collect-data {
+    text-align: center;
+
+    button {
+      padding: 8px 8px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 17px;
+      margin-top: 10px;
+      background-color: $green-color;
+      color: #ffffff;
+      &:hover {
+        background-color: $dark-green-color;
+      }
+      @include button-styles;
+      width: 240px;
+      letter-spacing: 0px;
+    }
+  }
 }
