@@ -38,10 +38,20 @@
         padding: 10px;
         // background: $light-green-color;
         border-radius: 10px;
+        display: flex;
+        align-items: center;
+
+        .enabled-check {
+          color: #1e7e34;
+        }
+
+        .disabled-check {
+          color: #6c757d !important;
+        }
 
         .check-description {
           color: #333;
-          font-size: 0.9rem;
+          font-size: 1rem;
         }
       }
 
