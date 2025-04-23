@@ -70,46 +70,89 @@ const SubmitModal = ({
       <h2>Extracted Document Details</h2>
       <div className="cards-container">
         {documentStatusData.length ? (
-          documentStatusData.map((doc, index) => {
-            const parsedDoc = documentData.find(
-              (p) => p.document_type === documentTypeMap[doc.document_type]
-            );
-            return (
-              <div
-                key={index}
-                className={`document-card ${getStatusClass(doc.status)}`}
-              >
-                <div className="header">
-                  <h3>{documentTypeMap[doc.document_type]} Fields</h3>
-                  <span
-                    className={`status-badge ${getStatusClass(doc.status)}`}
-                  >
-                    {doc.status}
-                  </span>
+          documentStatusData.flatMap((doc, index) => {
+            const isBankStatement = doc.document_type === "BANK_STATEMENT";
+            if (isBankStatement) {
+              const bankDocs = documentData.filter((d) =>
+                d.document_type.startsWith("Bank Statement")
+              );
+              return bankDocs.map((parsedDoc, i) => (
+                <div
+                  key={`bank-${i}`}
+                  className={`document-card ${getStatusClass(doc.status)}`}
+                >
+                  <div className="header">
+                    <h3>{parsedDoc.document_type}</h3>
+                    <span
+                      className={`status-badge ${getStatusClass(doc.status)}`}
+                    >
+                      {doc.status}
+                    </span>
+                  </div>
+                  <div className="extracted-fields">
+                    {parsedDoc.meta_data ? (
+                      <ul>
+                        {Object.entries(parsedDoc.meta_data).map(
+                          ([key, value]) => (
+                            <li key={key}>
+                              <strong>
+                                {key
+                                  .replace(/_/g, " ")
+                                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+                                :
+                              </strong>{" "}
+                              {value.value || "Not Available"}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    ) : (
+                      <p>No extracted fields available</p>
+                    )}
+                  </div>
                 </div>
-                <div className="extracted-fields">
-                  {parsedDoc && parsedDoc.meta_data ? (
-                    <ul>
-                      {Object.entries(parsedDoc.meta_data).map(
-                        ([key, value]) => (
-                          <li key={key}>
-                            <strong>
-                              {key
-                                .replace(/_/g, " ")
-                                .replace(/\b\w/g, (c) => c.toUpperCase())}
-                              :
-                            </strong>{" "}
-                            {value.value || "Not Available"}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  ) : (
-                    <p>No extracted fields available</p>
-                  )}
+              ));
+            } else {
+              const parsedDoc = documentData.find(
+                (p) => p.document_type === documentTypeMap[doc.document_type]
+              );
+              return (
+                <div
+                  key={index}
+                  className={`document-card ${getStatusClass(doc.status)}`}
+                >
+                  <div className="header">
+                    <h3>{documentTypeMap[doc.document_type]}</h3>
+                    <span
+                      className={`status-badge ${getStatusClass(doc.status)}`}
+                    >
+                      {doc.status}
+                    </span>
+                  </div>
+                  <div className="extracted-fields">
+                    {parsedDoc && parsedDoc.meta_data ? (
+                      <ul>
+                        {Object.entries(parsedDoc.meta_data).map(
+                          ([key, value]) => (
+                            <li key={key}>
+                              <strong>
+                                {key
+                                  .replace(/_/g, " ")
+                                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+                                :
+                              </strong>{" "}
+                              {value.value || "Not Available"}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    ) : (
+                      <p>No extracted fields available</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
+              );
+            }
           })
         ) : (
           <div className="no-data-to-display"> No Data to Display</div>

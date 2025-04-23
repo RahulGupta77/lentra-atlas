@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Modal from "../../../components/primitives/Modal";
 import { getAllDocsStatus } from "../../../services/dashboardService";
 import { get_document_meta_data } from "../../../services/ParsedDataWindowService";
+import { renameBankStatements } from "../../../utils/parsedDataMethods";
 import DocumentViewer from "./DocumentViewer";
 import "./ParsedDataWindow.scss";
 import SubmitModal from "./SubmitModal";
@@ -20,7 +21,8 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
   useEffect(() => {
     const fetchDocumentsFromServer = async () => {
       const response = await get_document_meta_data(id);
-      setDocumentData(response.data);
+      const renameData = renameBankStatements(response?.data || []);
+      setDocumentData(renameData);
     };
 
     fetchDocumentsFromServer();
