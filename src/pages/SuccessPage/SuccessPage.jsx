@@ -31,6 +31,8 @@ const caseData = {
   suggestedNextSteps: [
     "FSSAI License (if selling packaged food items) – else mention that no packaged food is sold",
   ],
+  suggestedNextStepsSubTitle:
+    "💡 In Similar Kirana Shop cases, Credit managers often request: ",
 };
 
 const SuccessPage = () => {
@@ -47,24 +49,28 @@ const SuccessPage = () => {
           items={caseData.aiInsights}
           icon="🔍"
           className="blue"
+          subTitle=""
         />
         <ListSection
           title="Pros of this Case"
           items={caseData.pros}
           icon="✅"
           className="green"
+          subTitle=""
         />
         <ListSection
           title="Potential Gaps / RM Attention Needed"
           items={caseData.potentialGaps}
           icon="⚠️"
           className="orange"
+          subTitle=""
         />
         <ListSection
           title="Suggested Next Steps (Based on Similar Cases)"
           items={caseData.suggestedNextSteps}
-          icon="💡"
+          icon="📌"
           className="red"
+          subTitle={caseData.suggestedNextStepsSubTitle}
         />
 
         <div className="collect-data">
