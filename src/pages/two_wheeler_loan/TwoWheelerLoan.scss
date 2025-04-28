@@ -1,0 +1,47 @@
+@use "../../styles/variables.scss" as *;
+@use "../../styles/mixins.scss" as *;
+
+@mixin parent-box {
+  height: 90vh;
+  padding: 20px 20px;
+  margin-top: 10px;
+}
+
+@mixin child-box {
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: $primary-box-shadow;
+  border-radius: 20px;
+  padding: 25px 20px;
+}
+
+.loan-content-data-verification {
+  @include parent-box;
+  width: 100%;
+  display: flex;
+  column-gap: 40px;
+  justify-content: center;
+
+  .main-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .file-details-box {
+    @include child-box;
+    flex: 0 0 60%;
+    max-width: 60%;
+    min-width: 60%;
+    overflow: scroll;
+    height: 85vh;
+    margin-right: 100px;
+  }
+
+  .main-content-data-verification-subbox {
+    display: flex;
+    flex-direction: column;
+
+    row-gap: 20px;
+  }
+}

@@ -12,12 +12,18 @@ export const send_message_to_llm = async (user_uuid, message) => {
   }
 };
 
-export const send_file_to_llm = async (user_uuid, file, fileType = "image") => {
+export const send_file_to_llm = async (
+  user_uuid,
+  file,
+  fileType = "image",
+  is_tw_file = false
+) => {
   try {
     const formData = new FormData();
     formData.append("user_uuid", user_uuid);
     formData.append("file", file);
     formData.append("fileType", fileType);
+    formData.append("is_tw_file", is_tw_file);
 
     const response = await apiClient.post("/customers/upload", formData, {
       headers: {

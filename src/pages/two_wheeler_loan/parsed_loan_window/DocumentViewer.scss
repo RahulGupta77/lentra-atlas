@@ -1,0 +1,74 @@
+@use "../../../styles/variables.scss" as *;
+@use "../../../styles/mixins.scss" as *;
+
+.document-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 15px;
+  max-width: 100%;
+  margin: 0 10px;
+}
+
+.document-box {
+  background: #f9f9f9;
+  border-radius: 6px; /* Slightly smaller border-radius */
+  padding: 10px; /* Reduced padding to decrease card height */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 3px solid $green-color; /* Slightly thinner border */
+}
+
+.document-type {
+  margin: 0 0 8px 0; /* Reduced margin */
+  color: $green-color;
+  font-size: 16px; /* Smaller font size */
+  font-weight: 500;
+}
+
+.meta-data {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Reduced gap */
+}
+
+.field-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Reduced gap */
+}
+
+label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.85em; /* Slightly smaller label */
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Reduced gap */
+}
+
+.read-only-input {
+  flex: 1;
+  padding: 6px; /* Reduced padding for smaller input */
+  border: 1px solid #ddd;
+  border-radius: 3px; /* Slightly smaller border-radius */
+  background: #e9ecef;
+  font-size: 0.9em; /* Smaller font size for input text */
+  color: #495057;
+  outline: none;
+}
+
+.confidence {
+  background: $green-color;
+  color: white;
+  padding: 3px 8px; /* Reduced padding */
+  border-radius: 10px; /* Smaller border-radius */
+  font-size: 0.8em; /* Smaller font size */
+  font-weight: 500;
+}
+
+.confidence:empty {
+  display: none;
+}

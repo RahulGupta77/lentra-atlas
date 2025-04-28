@@ -94,7 +94,7 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
         </div>
 
         <div className="checklist-section">
-          <h3>Verification Checks Applied</h3>
+          <h3>MSME Overdraft Checks to be Applied</h3>
           <div className="checklist">
             {Object.entries(crossChecks).map(([key, description]) => (
               <label key={key} className="checklist-item">
@@ -174,8 +174,8 @@ const Dashboard = () => {
               <tr>
                 <th>Customer First Name</th>
                 <th>Phone Number</th>
-                <th></th>
-                <th></th>
+                <th>Data Verification</th>
+                {/* <th></th> */}
               </tr>
             </thead>
             <tbody>
@@ -190,15 +190,25 @@ const Dashboard = () => {
                       <td>
                         <button
                           onClick={() => {
+                            navigate(`/loan/${customer.uuid}`);
+                          }}
+                          style={{ width: "200px" }}
+                        >
+                          Two Wheeler Loan
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => {
                             if (customer.is_submitted) {
                               navigate(`/success/${customer.uuid}`);
                             } else {
                               navigate(`/dashboard/${customer.uuid}`);
                             }
                           }}
-                          style={{ width: "234px" }}
+                          style={{ width: "200px" }}
                         >
-                          Data Verification
+                          MSME Overdraft
                         </button>
                       </td>
                     </tr>
