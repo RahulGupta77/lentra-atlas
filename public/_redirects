@@ -1,3 +1,4 @@
 /dashboard/*    /index.html   200
 /dashboard    /   301
-/success/*   /	  301
+/success/*   /index.html   200
+/loan/*   /index.html   200

@@ -1,6 +1,7 @@
 import Pusher from "pusher-js";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { send_file_to_llm } from "../../../services/chatService";
 import { get_tw_document_meta_data } from "../../../services/ParsedDataWindowService";
 import DocumentViewer from "./DocumentViewer";
@@ -44,6 +45,23 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
       }
     });
 
+    // Bind to the parsed_data_lentra_poc event
+    channel.bind("direct_notification", (payload) => {
+      try {
+        const { status, message } = payload;
+
+        if (status === "failed") {
+          toast.error(message, { autoClose: 10000 }); // 8 seconds
+        } else if (status === "passed") {
+          toast.success(message, { autoClose: 10000 });
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error processing Pusher payload:", error.message);
+      }
+    });
+
     // Cleanup function to unsubscribe and disconnect
     return () => {
       channel.unbind_all();
@@ -82,9 +100,13 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
   return (
     <div className="parsed-data-window">
       <div className="parsed-data-window-header">
-        <h2>Parsed Data</h2>
+        <h2>Two Wheeler Loan Documents</h2>
         <label htmlFor="image-upload">
-          {loading ? "Extracting Details..." : "Upload Files"}
+          {loading ? (
+            <span className="parsed-loading-state"></span>
+          ) : (
+            "Upload Files"
+          )}
         </label>
         <input
           id="image-upload"
