@@ -127,7 +127,7 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
         <input
           id="image-upload"
           type="file"
-          accept=".jpg, .jpeg, .png, .webp, .pdf"
+          accept=".jpg, .jpeg, .png, .webp, .pdf, .tif"
           style={{ display: "none" }}
           ref={fileInputRef}
           onChange={(e) => {
