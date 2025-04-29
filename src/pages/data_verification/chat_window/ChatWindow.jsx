@@ -245,6 +245,8 @@ const ChatWindow = ({ setUpdateDocStatusTrigger }) => {
       return;
     }
 
+    setIsLoading(true);
+
     const url = URL.createObjectURL(file);
 
     const fileMessage = {
@@ -263,15 +265,22 @@ const ChatWindow = ({ setUpdateDocStatusTrigger }) => {
     setLenderCurrentChat((prev) => [...prev, fileMessage]);
     scrollToBottom(chatContainerScrollRef);
 
-    const response = await send_file_to_llm(
-      id,
-      file,
-      file.type.startsWith("image/") ? "image" : "pdf"
-    );
+    try {
+      await send_file_to_llm(
+        id,
+        file,
+        file.type.startsWith("image/") ? "image" : "pdf"
+      );
 
-    setUpdateDocStatusTrigger((prev) => !prev);
-
-    setIsLoading(false);
+      setUpdateDocStatusTrigger((prev) => !prev);
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsLoading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
+    }
   };
 
   const handleInputChange = (e) => {

@@ -71,23 +71,31 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
   }, [id]);
 
   const handleFileUpload = async (file) => {
-    // Check if the file is an image or PDF
     if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
       console.error("Only image and PDF files are allowed.");
       return;
     }
 
-    const url = URL.createObjectURL(file);
+    setLoading(true); // Move loading to start here to avoid race condition
 
-    const response = await send_file_to_llm(
-      id,
-      file,
-      file.type.startsWith("image/") ? "image" : "pdf",
-      true
-    );
+    try {
+      await send_file_to_llm(
+        id,
+        file,
+        file.type.startsWith("image/") ? "image" : "pdf",
+        true
+      );
 
-    setTrigger((prev) => !prev);
-    setLoading(false);
+      setTrigger((prev) => !prev);
+    } catch (error) {
+      toast.error("File upload failed.");
+      console.error("Upload error:", error);
+    } finally {
+      setLoading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
+    }
   };
 
   const handleInputChange = (e) => {
@@ -101,7 +109,15 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
     <div className="parsed-data-window">
       <div className="parsed-data-window-header">
         <h2>Two Wheeler Loan Documents</h2>
-        <label htmlFor="image-upload">
+        <label
+          style={{ cursor: loading ? "not-allowed" : "pointer" }}
+          htmlFor="image-upload"
+          onClick={(e) => {
+            if (loading) {
+              e.preventDefault(); // ⛔️ Prevent file dialog from opening
+            }
+          }}
+        >
           {loading ? (
             <span className="parsed-loading-state"></span>
           ) : (
@@ -118,6 +134,7 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
             setLoading(true);
             handleInputChange(e);
           }}
+          disabled={loading}
         />
       </div>
       {documentData.length > 0 ? (
