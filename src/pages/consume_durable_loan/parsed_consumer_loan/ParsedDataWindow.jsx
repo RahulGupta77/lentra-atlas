@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { send_file_to_llm } from "../../../services/chatService";
-import { get_tw_document_meta_data } from "../../../services/ParsedDataWindowService";
+import { get_cdl_document_meta_data } from "../../../services/ParsedDataWindowService";
 import DocumentViewer from "./DocumentViewer";
 import "./ParsedDataWindow.scss";
 
@@ -17,7 +17,7 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
 
   useEffect(() => {
     const fetchDocumentsFromServer = async () => {
-      const response = await get_tw_document_meta_data(id);
+      const response = await get_cdl_document_meta_data(id);
       // const renameData = renameBankStatements(response?.data || []);
       setDocumentData(response?.data || []);
     };
@@ -46,7 +46,7 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
     });
 
     // Bind to the parsed_data_lentra_poc event
-    channel.bind("twowheeler_direct_notification", (payload) => {
+    channel.bind("consumer_durable_direct_notification", (payload) => {
       try {
         const { status, message } = payload;
 
@@ -83,7 +83,7 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
         id,
         file,
         file.type.startsWith("image/") ? "image" : "pdf",
-        "two-wheeler-loan"
+        "consumer-durable-loan"
       );
 
       setTrigger((prev) => !prev);
@@ -105,12 +105,10 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
     }
   };
 
-  console.log(documentData);
-
   return (
     <div className="parsed-data-window">
       <div className="parsed-data-window-header">
-        <h2>Two Wheeler Loan Documents</h2>
+        <h2>Consumer Durable Loan</h2>
         <label
           style={{ cursor: loading ? "not-allowed" : "pointer" }}
           htmlFor="image-upload"

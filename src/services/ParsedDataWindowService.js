@@ -17,3 +17,12 @@ export const get_tw_document_meta_data = async (user_uuid) => {
     return error;
   }
 };
+
+export const get_cdl_document_meta_data = async (user_uuid) => {
+  try {
+    const response = await apiClient.get(`/cdl-documents/${user_uuid}`);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

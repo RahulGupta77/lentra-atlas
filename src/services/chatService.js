@@ -16,14 +16,14 @@ export const send_file_to_llm = async (
   user_uuid,
   file,
   fileType = "image",
-  is_tw_file = false
+  loan_type
 ) => {
   try {
     const formData = new FormData();
     formData.append("user_uuid", user_uuid);
     formData.append("file", file);
     formData.append("fileType", fileType);
-    formData.append("is_tw_file", is_tw_file);
+    formData.append("loan_type", loan_type);
 
     const response = await apiClient.post("/customers/upload", formData, {
       headers: {

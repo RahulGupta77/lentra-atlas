@@ -269,7 +269,8 @@ const ChatWindow = ({ setUpdateDocStatusTrigger }) => {
       await send_file_to_llm(
         id,
         file,
-        file.type.startsWith("image/") ? "image" : "pdf"
+        file.type.startsWith("image/") ? "image" : "pdf",
+        "msme-overdraft"
       );
 
       setUpdateDocStatusTrigger((prev) => !prev);

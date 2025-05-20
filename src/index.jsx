@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 import ProtectComponent from "./components/ProtectComponent";
 import Login from "./pages/auth/Login.jsx";
+import ConsumerDurableLoan from "./pages/consume_durable_loan/ConsumerDurableLoan.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import DataVerification from "./pages/data_verification/DataVerification.jsx";
 import SuccessPage from "./pages/SuccessPage/SuccessPage.jsx";
@@ -14,6 +15,7 @@ const ProtectedDashboard = ProtectComponent(Dashboard);
 const ProtectedDataVerification = ProtectComponent(DataVerification);
 const ProtectedSuccessPage = ProtectComponent(SuccessPage);
 const ProtectedTwoWheelerLoan = ProtectComponent(TwoWheelerLoan);
+const ProtectedConsumerDurableLoan = ProtectComponent(ConsumerDurableLoan);
 
 const appRouter = createBrowserRouter([
   {
@@ -35,6 +37,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/loan/:id",
         element: <ProtectedTwoWheelerLoan />,
+      },
+      {
+        path: "/cdl/:id",
+        element: <ProtectedConsumerDurableLoan />,
       },
       {
         path: "/success/:id",

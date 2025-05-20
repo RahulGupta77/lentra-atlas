@@ -190,6 +190,16 @@ const Dashboard = () => {
                       <td>
                         <button
                           onClick={() => {
+                            navigate(`/cdl/${customer.uuid}`);
+                          }}
+                          style={{ width: "200px" }}
+                        >
+                          Consumer Durable
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => {
                             navigate(`/loan/${customer.uuid}`);
                           }}
                           style={{ width: "200px" }}
