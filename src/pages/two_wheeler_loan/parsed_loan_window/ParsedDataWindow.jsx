@@ -105,7 +105,6 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
     }
   };
 
-  console.log(documentData);
 
   return (
     <div className="parsed-data-window">

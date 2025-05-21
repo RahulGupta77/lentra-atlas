@@ -64,8 +64,6 @@ const DocumentChecklist = ({ updateDocStatusTrigger }) => {
     (doc) => doc.status === "VERIFIED"
   ).length;
 
-  console.log(enabledChecklist);
-
   return (
     <div className="document-checklist">
       <div className="header">

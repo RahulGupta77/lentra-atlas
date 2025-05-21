@@ -16,13 +16,30 @@
   padding: 10px; /* Reduced padding to decrease card height */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-left: 3px solid $green-color; /* Slightly thinner border */
-}
 
-.document-type {
-  margin: 0 0 8px 0; /* Reduced margin */
-  color: $green-color;
-  font-size: 16px; /* Smaller font size */
-  font-weight: 500;
+  .document-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+
+    .document-file-name,
+    .document-type {
+      margin: 0 0 8px 0; /* Reduced margin */
+      font-weight: 500;
+    }
+
+    .document-type {
+      color: $green-color;
+      font-size: 16px; /* Smaller font size */
+    }
+
+    .document-file-name {
+      color: #333;
+      font-size: 14px; /* Smaller font size */
+    }
+  }
 }
 
 .meta-data {

@@ -6,9 +6,14 @@ const DocumentViewer = ({ documents }) => {
     <div className="document-container">
       {documents.map((doc, index) => (
         <div key={index} className="document-box">
-          <h3 className="document-type">
-            {doc.document_type || "Untitled Document"}
-          </h3>
+          <div className="document-header">
+            <h3 className="document-type">
+              {doc.document_type || "Untitled Document"}
+            </h3>
+            <p className="document-file-name">
+              {doc.file_name || "No file name available"}
+            </p>
+          </div>
           <div className="meta-data">
             {Object.entries(doc.meta_data).map(([field, data]) => (
               <div key={field} className="field-box">
