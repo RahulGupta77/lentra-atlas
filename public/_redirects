@@ -2,3 +2,4 @@
 /dashboard    /   301
 /success/*   /index.html   200
 /loan/*   /index.html   200
+/cdl/* /index.html   200

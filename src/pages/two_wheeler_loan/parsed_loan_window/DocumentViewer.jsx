@@ -21,7 +21,7 @@ const DocumentViewer = ({ documents }) => {
                 <div className="input-group">
                   <input
                     type="text"
-                    value={Number(data.value) === 0 ? 0 : data.value || ""}
+                    value={data.value === 0 ? 0 : data.value || ""}
                     readOnly
                     className="read-only-input"
                   />
