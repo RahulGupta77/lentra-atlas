@@ -10,6 +10,10 @@ import DataVerification from "./pages/data_verification/DataVerification.jsx";
 import SuccessPage from "./pages/SuccessPage/SuccessPage.jsx";
 import TwoWheelerLoan from "./pages/two_wheeler_loan/TwoWheelerLoan.jsx";
 import store from "./redux/store.js";
+import { initSentry } from "./utils/sentry";
+
+// Initialize Sentry
+initSentry();
 
 const ProtectedDashboard = ProtectComponent(Dashboard);
 const ProtectedDataVerification = ProtectComponent(DataVerification);

@@ -5,6 +5,12 @@ import { toast } from "react-toastify";
 import Modal from "../../components/primitives/Modal";
 import { updateIsModalOpen } from "../../redux/overlayElementsSlice";
 import { addCustomer, getAllCustomer } from "../../services/dashboardService";
+import {
+  captureException,
+  logger,
+  startSpan,
+  withTransaction,
+} from "../../utils/sentry";
 import "./Dashboard.scss";
 
 // Inner content of Modal. ie inputs, buttons, etc
@@ -23,40 +29,69 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
 
   const handleBorrowerInfoSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const { borrower_name, borrower_id, ...checks } = Object.fromEntries(
-      formData.entries()
-    );
 
-    if (!borrower_name || !borrower_id) {
-      toast.error("All fields are required");
-      return;
-    }
-
-    const isValidPhone = /^\d{10}$/.test(borrower_id);
-    if (!isValidPhone) {
-      toast.error("Customer phone number must be a valid 10-digit number!");
-      return;
-    }
-
-    try {
-      const response = await addCustomer(
-        borrower_name,
-        borrower_id,
-        Object.keys(checks)
+    // Use the modern withTransaction approach
+    return withTransaction("Add Borrower Flow", "user-action", async () => {
+      const formData = new FormData(e.currentTarget);
+      const { borrower_name, borrower_id, ...checks } = Object.fromEntries(
+        formData.entries()
       );
 
-      if (response.status !== 201) {
-        throw new Error("Error while adding customer!");
+      if (!borrower_name || !borrower_id) {
+        logger.warn("Attempt to add borrower with empty fields");
+        toast.error("All fields are required");
+        return;
       }
 
-      setAllCustomers((prev) => [response.data, ...prev]);
-      toast.success("New borrower added successfully");
-      handleModalClose();
-    } catch (error) {
-      toast.error("Error while adding new borrower");
-      console.error(error.message);
-    }
+      const isValidPhone = /^\d{10}$/.test(borrower_id);
+      if (!isValidPhone) {
+        logger.warn("Invalid phone number format", {
+          providedNumber: borrower_id,
+        });
+        toast.error("Customer phone number must be a valid 10-digit number!");
+        return;
+      }
+
+      try {
+        const response = await startSpan(
+          {
+            op: "http.client",
+            name: "Add Customer API Call",
+          },
+          async () => {
+            return await addCustomer(
+              borrower_name,
+              borrower_id,
+              Object.keys(checks)
+            );
+          }
+        );
+
+        if (response.status !== 201) {
+          throw new Error("Error while adding customer!");
+        }
+
+        setAllCustomers((prev) => [response.data, ...prev]);
+        toast.success("New borrower added successfully");
+        handleModalClose();
+        logger.info("New borrower added successfully", {
+          borrower_name,
+          borrower_id,
+        });
+      } catch (error) {
+        logger.error("Error while adding new borrower", {
+          error: error.message,
+          borrower_name,
+          borrower_id,
+        });
+        captureException(error, {
+          location: "Add Borrower API Call",
+          borrower_name,
+          borrower_id,
+        });
+        toast.error("Error while adding new borrower");
+      }
+    });
   };
 
   const handleModalClose = () => {
@@ -123,21 +158,41 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchCustomers = async () => {
-      try {
-        const token = localStorage.getItem("access_token");
-        if (!token) {
-          toast.error("Unauthorized: No token found");
-          return;
+      // Use the modern withTransaction approach
+      return withTransaction("Fetch Customers Flow", "data-fetch", async () => {
+        try {
+          const token = localStorage.getItem("access_token");
+          if (!token) {
+            logger.warn("Unauthorized access attempt: No token found");
+            toast.error("Unauthorized: No token found");
+            return;
+          }
+
+          const response = await startSpan(
+            {
+              op: "http.client",
+              name: "Get All Customers API Call",
+            },
+            async () => {
+              return await getAllCustomer();
+            }
+          );
+
+          setAllCustomers(response.data.customer_users);
+          logger.info("Fetched all customers successfully");
+        } catch (error) {
+          logger.error("Failed to fetch customers", {
+            error: error.message,
+          });
+          captureException(error, {
+            location: "Fetch Customers API Call",
+          });
+          toast.error(
+            error?.response?.data?.error ||
+              "Something went wrong while fetching customers"
+          );
         }
-        const response = await getAllCustomer();
-        setAllCustomers(response.data.customer_users);
-      } catch (error) {
-        console.error("Failed to fetch customers", error);
-        toast.error(
-          error?.response?.data?.error ||
-            "Something went wrong while fetching customers"
-        );
-      }
+      });
     };
 
     fetchCustomers();

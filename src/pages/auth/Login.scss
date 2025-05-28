@@ -67,10 +67,13 @@
 
         // styles for eye icon
         .eye-icon {
+          @include button-styles;
           position: absolute;
           right: 1rem;
           padding-top: 8px;
-          top: 50%;
+          width: 20px;
+          height: 20px;
+          top: 40%;
           transform: translateY(-50%);
           font-size: 1.2rem;
           cursor: pointer;
