@@ -38,15 +38,19 @@ const DocumentCard = ({ documentType, status, created_at }) => {
   return (
     <div className={`document-card ${statusInfo.className}`}>
       <div className="top">
-        <span className="doc-type">{formatLabel(documentType)}</span>
+        <span className="doc-type">
+          {documentType.length > 8
+            ? `${formatLabel(documentType).slice(0, 8)}...`
+            : formatLabel(documentType)}
+        </span>
         <span className={`status label-${statusInfo.className}`}>
           {statusInfo.icon}
           {statusInfo.label}
         </span>
       </div>
-      <p className="date">
+      {/* <p className="date">
         {created_at ? `File Upload Success` : "File Upload Pending"}
-      </p>
+      </p> */}
     </div>
   );
 };
