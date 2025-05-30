@@ -16,6 +16,7 @@ const SubmitModal = ({
     UDYAM_CERT: "UDYAM Certificate",
     EBILL: "Electricity Bill",
     BANK_STATEMENT: "Bank Statement",
+    SHOP_ACT_LICENSE: "Shop Act License",
   };
 
   const { id } = useParams();

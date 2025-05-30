@@ -45,7 +45,7 @@ const DocumentCard = ({ documentType, status, created_at }) => {
         </span>
       </div>
       <p className="date">
-        {created_at ? `Uploaded ${created_at}` : "File Upload Pending"}
+        {created_at ? `File Upload Success` : "File Upload Pending"}
       </p>
     </div>
   );
