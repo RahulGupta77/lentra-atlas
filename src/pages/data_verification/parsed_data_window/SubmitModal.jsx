@@ -17,7 +17,12 @@ const SubmitModal = ({
     EBILL: "Electricity Bill",
     BANK_STATEMENT: "Bank Statement",
     SHOP_ACT_LICENSE: "Shop Act License",
+    FSSAI_CERTIFICATE: "FSSAI Certificate",
+    PURCHASE_ORDER: "Purchase Order",
   };
+
+  console.log(documentData);
+  console.log(documentStatusData);
 
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -72,51 +77,16 @@ const SubmitModal = ({
       <div className="cards-container">
         {documentStatusData.length ? (
           documentStatusData.flatMap((doc, index) => {
-            const isBankStatement = doc.document_type === "BANK_STATEMENT";
-            if (isBankStatement) {
-              const bankDocs = documentData.filter((d) =>
-                d.document_type.startsWith("Bank Statement")
-              );
-              return bankDocs.map((parsedDoc, i) => (
-                <div
-                  key={`bank-${i}`}
-                  className={`document-card ${getStatusClass(doc.status)}`}
-                >
-                  <div className="header">
-                    <h3>{parsedDoc.document_type}</h3>
-                    <span
-                      className={`status-badge ${getStatusClass(doc.status)}`}
-                    >
-                      {doc.status}
-                    </span>
-                  </div>
-                  <div className="extracted-fields">
-                    {parsedDoc.meta_data ? (
-                      <ul>
-                        {Object.entries(parsedDoc.meta_data).map(
-                          ([key, value]) => (
-                            <li key={key}>
-                              <strong>
-                                {key
-                                  .replace(/_/g, " ")
-                                  .replace(/\b\w/g, (c) => c.toUpperCase())}
-                                :
-                              </strong>{" "}
-                              {value.value || "Not Available"}
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    ) : (
-                      <p>No extracted fields available</p>
-                    )}
-                  </div>
-                </div>
-              ));
-            } else {
-              const parsedDoc = documentData.find(
-                (p) => p.document_type === documentTypeMap[doc.document_type]
-              );
+            // Get all documents of the current type
+            const matchingDocs = documentData.filter((d) => {
+              if (doc.document_type === "BANK_STATEMENT") {
+                return d.document_type.startsWith("Bank Statement");
+              }
+              return d.document_type === documentTypeMap[doc.document_type];
+            });
+
+            // If no matching documents found, return a single card with no data
+            if (!matchingDocs.length) {
               return (
                 <div
                   key={index}
@@ -131,29 +101,52 @@ const SubmitModal = ({
                     </span>
                   </div>
                   <div className="extracted-fields">
-                    {parsedDoc && parsedDoc.meta_data ? (
-                      <ul>
-                        {Object.entries(parsedDoc.meta_data).map(
-                          ([key, value]) => (
-                            <li key={key}>
-                              <strong>
-                                {key
-                                  .replace(/_/g, " ")
-                                  .replace(/\b\w/g, (c) => c.toUpperCase())}
-                                :
-                              </strong>{" "}
-                              {value.value || "Not Available"}
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    ) : (
-                      <p>No extracted fields available</p>
-                    )}
+                    <p>No extracted fields available</p>
                   </div>
                 </div>
               );
             }
+
+            // Return a card for each matching document
+            return matchingDocs.map((parsedDoc, i) => (
+              <div
+                key={`${doc.document_type}-${i}`}
+                className={`document-card ${getStatusClass(doc.status)}`}
+              >
+                <div className="header">
+                  <h3>
+                    {documentTypeMap[doc.document_type]}
+                    {parsedDoc.file_name && ` - ${parsedDoc.file_name}`}
+                  </h3>
+                  <span
+                    className={`status-badge ${getStatusClass(doc.status)}`}
+                  >
+                    {doc.status}
+                  </span>
+                </div>
+                <div className="extracted-fields">
+                  {parsedDoc.meta_data ? (
+                    <ul>
+                      {Object.entries(parsedDoc.meta_data).map(
+                        ([key, value]) => (
+                          <li key={key}>
+                            <strong>
+                              {key
+                                .replace(/_/g, " ")
+                                .replace(/\b\w/g, (c) => c.toUpperCase())}
+                              :
+                            </strong>{" "}
+                            {value.value || "Not Available"}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  ) : (
+                    <p>No extracted fields available</p>
+                  )}
+                </div>
+              </div>
+            ));
           })
         ) : (
           <div className="no-data-to-display"> No Data to Display</div>

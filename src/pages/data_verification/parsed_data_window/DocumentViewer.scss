@@ -16,6 +16,25 @@
   padding: 10px; /* Reduced padding to decrease card height */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-left: 3px solid $green-color; /* Slightly thinner border */
+
+  .document-type-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    .document-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: $green-color;
+    }
+
+    .document-file-name {
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
 }
 
 .document-type {
