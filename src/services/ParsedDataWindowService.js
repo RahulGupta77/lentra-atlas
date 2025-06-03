@@ -26,3 +26,14 @@ export const get_cdl_document_meta_data = async (user_uuid) => {
     return error;
   }
 };
+
+export const get_current_account_document_meta_data = async (user_uuid) => {
+  try {
+    const response = await apiClient.get(
+      `/current-account-documents/${user_uuid}`
+    );
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

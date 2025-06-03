@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import ProtectComponent from "./components/ProtectComponent";
 import Login from "./pages/auth/Login.jsx";
 import ConsumerDurableLoan from "./pages/consume_durable_loan/ConsumerDurableLoan.jsx";
+import CurrentAccount from "./pages/current_account/CurrentAccount.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import DataVerification from "./pages/data_verification/DataVerification.jsx";
 import SuccessPage from "./pages/SuccessPage/SuccessPage.jsx";
@@ -16,6 +17,7 @@ const ProtectedDataVerification = ProtectComponent(DataVerification);
 const ProtectedSuccessPage = ProtectComponent(SuccessPage);
 const ProtectedTwoWheelerLoan = ProtectComponent(TwoWheelerLoan);
 const ProtectedConsumerDurableLoan = ProtectComponent(ConsumerDurableLoan);
+const ProtectedCurrentAccount = ProtectComponent(CurrentAccount);
 
 const appRouter = createBrowserRouter([
   {
@@ -45,6 +47,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/success/:id",
         element: <ProtectedSuccessPage />,
+      },
+      {
+        path: "/current-account/:id",
+        element: <ProtectedCurrentAccount />,
       },
     ],
     errorElement: <div>Error Page</div>,

@@ -173,8 +173,8 @@ const Dashboard = () => {
             <thead>
               <tr>
                 <th>Customer First Name</th>
-                <th>Phone Number</th>
-                <th>Data Verification</th>
+                {/* <th>Phone Number</th> */}
+                <th style={{ textAlign: "center" }}>Data Verification</th>
                 {/* <th></th> */}
               </tr>
             </thead>
@@ -186,7 +186,17 @@ const Dashboard = () => {
                       <td style={{ textTransform: "capitalize" }}>
                         {customer.name}
                       </td>
-                      <td>{customer.phone_number}</td>
+                      {/* <td>{customer.phone_number}</td> */}
+                      <td>
+                        <button
+                          onClick={() => {
+                            navigate(`/current-account/${customer.uuid}`);
+                          }}
+                          style={{ width: "200px" }}
+                        >
+                          Current Account
+                        </button>
+                      </td>
                       <td>
                         <button
                           onClick={() => {
