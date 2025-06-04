@@ -70,21 +70,36 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
     };
   }, [id]);
 
-  const handleFileUpload = async (file) => {
-    if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
-      console.error("Only image and PDF files are allowed.");
+  const handleFileUpload = async (files) => {
+    // Check if more than 2 files are selected
+    if (files.length > 2) {
+      toast.error("You can only upload a maximum of 2 files at once.");
+      setLoading(false);
       return;
     }
 
-    setLoading(true); // Move loading to start here to avoid race condition
+    setLoading(true);
 
     try {
-      await send_file_to_llm(
-        id,
-        file,
-        file.type.startsWith("image/") ? "image" : "pdf",
-        "current-account"
-      );
+      // Process each file
+      for (const file of files) {
+        if (
+          !file.type.startsWith("image/") &&
+          file.type !== "application/pdf"
+        ) {
+          toast.error(
+            `${file.name} is not a valid file type. Only images and PDFs are allowed.`
+          );
+          continue;
+        }
+
+        await send_file_to_llm(
+          id,
+          file,
+          file.type.startsWith("image/") ? "image" : "pdf",
+          "current-account"
+        );
+      }
 
       setTrigger((prev) => !prev);
     } catch (error) {
@@ -99,9 +114,9 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
   };
 
   const handleInputChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleFileUpload(file, fileInputRef);
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      handleFileUpload(files);
     }
   };
 
@@ -135,6 +150,7 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
             handleInputChange(e);
           }}
           disabled={loading}
+          multiple
         />
       </div>
       {documentData.length > 0 ? (

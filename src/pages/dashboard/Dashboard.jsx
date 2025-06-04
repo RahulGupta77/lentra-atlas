@@ -19,6 +19,10 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
     UDAYM_GST_ADDRESS: "Address name match between Udyam certificate and GST.",
     UDAYM_GST_COMPANY_NAME:
       "Company's name match between Udyam and GST certificate.",
+    CIBIL_BOARD_RESOLUTION_CUSTOMER_NAME:
+      "Consumer Name match between Cibil report and Board resolution's Directors.",
+    BOARD_CIBIL_REPORT_CUSTOMER_NAME:
+      "Director Name match between Board resolution and Cibil report's Consumer Name.",
   };
 
   const handleBorrowerInfoSubmit = async (e) => {
