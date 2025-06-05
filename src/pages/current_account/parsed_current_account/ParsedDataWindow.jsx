@@ -72,8 +72,8 @@ const ParsedDataWindow = ({ updateDocStatusTrigger }) => {
 
   const handleFileUpload = async (files) => {
     // Check if more than 2 files are selected
-    if (files.length > 2) {
-      toast.error("You can only upload a maximum of 2 files at once.");
+    if (files.length > 1) {
+      toast.error("You can only upload a maximum of 1 file at once.");
       setLoading(false);
       return;
     }
