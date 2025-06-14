@@ -1,6 +1,5 @@
 @use "../../../styles/variables.scss" as *;
 @use "../../../styles/mixins.scss" as *;
-
 .document-container {
   display: flex;
   flex-direction: column;
@@ -9,14 +8,12 @@
   max-width: 600px;
   margin: 0 10px;
 }
-
 .document-box {
   background: #f9f9f9;
   border-radius: 6px; /* Slightly smaller border-radius */
   padding: 10px; /* Reduced padding to decrease card height */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-left: 3px solid $green-color; /* Slightly thinner border */
-
   .document-type-container {
     display: flex;
     justify-content: space-between;
@@ -29,45 +26,66 @@
       font-weight: 500;
       color: $green-color;
     }
-
     .document-file-name {
       font-size: 14px;
       font-weight: 400;
     }
   }
 }
-
+.page-data {
+  position: relative;
+  padding: 10px 0;
+}
+.page-separator {
+  height: 1px;
+  background: #ddd;
+  margin: 15px 0;
+  position: relative;
+  &::before {
+    content: "•";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #f9f9f9;
+    padding: 0 10px;
+    color: #666;
+  }
+}
+.page-header {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px dashed #ddd;
+}
 .document-type {
   margin: 0 0 8px 0; /* Reduced margin */
   color: $green-color;
   font-size: 16px; /* Smaller font size */
   font-weight: 500;
 }
-
 .meta-data {
   display: flex;
   flex-direction: column;
   gap: 8px; /* Reduced gap */
 }
-
 .field-box {
   display: flex;
   flex-direction: column;
   gap: 4px; /* Reduced gap */
 }
-
 label {
   font-weight: 600;
   color: #333;
   font-size: 0.85em; /* Slightly smaller label */
 }
-
 .input-group {
   display: flex;
   align-items: center;
   gap: 8px; /* Reduced gap */
 }
-
 .read-only-input {
   flex: 1;
   padding: 6px; /* Reduced padding for smaller input */
@@ -78,7 +96,6 @@ label {
   color: #495057;
   outline: none;
 }
-
 .confidence {
   background: $green-color;
   color: white;
@@ -87,7 +104,6 @@ label {
   font-size: 0.8em; /* Smaller font size */
   font-weight: 500;
 }
-
 .confidence:empty {
   display: none;
 }
