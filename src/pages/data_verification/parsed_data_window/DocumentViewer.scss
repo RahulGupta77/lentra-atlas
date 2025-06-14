@@ -37,6 +37,38 @@
   }
 }
 
+.page-data {
+  position: relative;
+  padding: 10px 0;
+}
+
+.page-separator {
+  height: 1px;
+  background: #ddd;
+  margin: 15px 0;
+  position: relative;
+
+  &::before {
+    content: "•";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #f9f9f9;
+    padding: 0 10px;
+    color: #666;
+  }
+}
+
+.page-header {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px dashed #ddd;
+}
+
 .document-type {
   margin: 0 0 8px 0; /* Reduced margin */
   color: $green-color;
