@@ -2,8 +2,6 @@ import React from "react";
 import "./DocumentViewer.scss";
 
 const DocumentViewer = ({ documents }) => {
-  console.log(documents);
-
   const renderMetaData = (metaData) => {
     // Check if metaData has data array (first type of object)
     if (Array.isArray(metaData?.data)) {
