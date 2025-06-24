@@ -9,6 +9,8 @@ const SageDashboard = () => {
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+  const [promptName, setPromptName] = useState("MSME");
+  const PROMPT_OPTIONS = ["MSME", "TW", "CDL", "BFSI", "EDUCATON", "KOTAK"];
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -40,6 +42,7 @@ const SageDashboard = () => {
     setResponse(null);
     const formData = new FormData();
     formData.append("file", selectedFile);
+    formData.append("prompt_name", promptName);
 
     try {
       const response = await axios.post(
@@ -62,7 +65,8 @@ const SageDashboard = () => {
     } catch (error) {
       console.error("Error uploading file:", error);
       setError(
-        error.response?.data?.message ||
+        error.response?.data?.error ||
+          error.response?.data?.message ||
           "Error uploading file. Please try again."
       );
     } finally {
@@ -91,6 +95,30 @@ const SageDashboard = () => {
             Select Image
           </button>
         </div>
+
+        <form
+          className="sage-dashboard__prompt-form"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <label
+            htmlFor="prompt-select"
+            className="sage-dashboard__prompt-label"
+          >
+            Select Prompt:
+          </label>
+          <select
+            id="prompt-select"
+            className="sage-dashboard__prompt-select"
+            value={promptName}
+            onChange={(e) => setPromptName(e.target.value)}
+          >
+            {PROMPT_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </form>
 
         {preview && (
           <div className="sage-dashboard__preview-section">

@@ -156,3 +156,32 @@
     transform: rotate(360deg);
   }
 }
+
+.sage-dashboard__prompt-form {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.sage-dashboard__prompt-label {
+  margin-right: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+.sage-dashboard__prompt-select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background: #fafbfc;
+  color: #222;
+  outline: none;
+  transition: border 0.2s;
+}
+.sage-dashboard__prompt-select:focus {
+  border: 1.5px solid #007bff;
+}
+.sage-dashboard__selected-prompt {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #555;
+}
