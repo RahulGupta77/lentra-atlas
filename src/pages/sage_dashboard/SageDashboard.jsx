@@ -46,7 +46,7 @@ const SageDashboard = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/internal/modeltest",
+        "https://dev4.kreditmind.com/internal/modeltest",
         formData,
         {
           headers: {
