@@ -46,7 +46,7 @@ const SageDashboard = () => {
 
     try {
       const response = await axios.post(
-        "https://dev4.kreditmind.com/internal/modeltest",
+        "http://localhost:5000/internal/modeltest",
         formData,
         {
           headers: {
@@ -82,7 +82,7 @@ const SageDashboard = () => {
         <div className="sage-dashboard__upload-section">
           <input
             ref={fileInputRef}
-            accept="image/*"
+            accept="image/*,application/pdf"
             type="file"
             onChange={handleFileSelect}
             className="sage-dashboard__file-input"
@@ -120,14 +120,26 @@ const SageDashboard = () => {
           </select>
         </form>
 
-        {preview && (
+        {preview && selectedFile && (
           <div className="sage-dashboard__preview-section">
             <h2 className="sage-dashboard__preview-section-title">Preview:</h2>
-            <img
-              src={preview}
-              alt="Preview"
-              className="sage-dashboard__preview-section-image"
-            />
+            {selectedFile.type === "application/pdf" ? (
+              <iframe
+                src={preview}
+                title="PDF Preview"
+                className="sage-dashboard__preview-section-pdf sage-dashboard__preview-section-media"
+                width="300"
+                height="300"
+              />
+            ) : (
+              <img
+                src={preview}
+                alt="Preview"
+                className="sage-dashboard__preview-section-image sage-dashboard__preview-section-media"
+                width="300"
+                height="300"
+              />
+            )}
           </div>
         )}
 

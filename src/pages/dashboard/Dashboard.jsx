@@ -120,12 +120,16 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
   );
 };
 
-const customerUuid = "5fdf0aab-e969-4f39-9966-aa59ed8da2a8";
+const customerUuids = [
+  "5fdf0aab-e969-4f39-9966-aa59ed8da2a8",
+  "4b782bcb-2865-4a43-a4f4-80ce5244198b",
+];
 
 const Dashboard = () => {
   const [isAddBorrowerModalOpen, setIsAddBorrowerModalOpen] = useState(false);
   const navigate = useNavigate();
   const [allcustomers, setAllCustomers] = useState([]);
+  const [currentCustomerUuid, setCurrentCustomerUuid] = useState(null);
 
   const [shouldSageEnable, setShouldSageEnable] = useState(false);
 
@@ -139,7 +143,10 @@ const Dashboard = () => {
         }
         const response = await getAllCustomer();
         setAllCustomers(response?.data?.customer_users);
-        setShouldSageEnable(response?.data?.customer_uuid === customerUuid);
+        setCurrentCustomerUuid(response?.data?.customer_uuid);
+        setShouldSageEnable(
+          customerUuids.includes(response?.data?.customer_uuid)
+        );
       } catch (error) {
         console.error("Failed to fetch customers", error);
         toast.error(
@@ -165,7 +172,7 @@ const Dashboard = () => {
           {shouldSageEnable && (
             <button
               onClick={() => {
-                navigate(`/sage-dashboard/${customerUuid}`);
+                navigate(`/sage-dashboard/${currentCustomerUuid}`);
               }}
             >
               Sage Dashboard
