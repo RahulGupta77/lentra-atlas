@@ -496,7 +496,7 @@ const ChatWindow = ({ setUpdateDocStatusTrigger }) => {
               <input
                 id="image-upload"
                 type="file"
-                accept=".jpg, .jpeg, .png, .webp, .pdf"
+                accept=".jpg, .jpeg, .png, .webp, .pdf, .tiff, .tif, .avif"
                 style={{ display: "none" }}
                 disabled={isLoading}
                 ref={fileInputRef}
