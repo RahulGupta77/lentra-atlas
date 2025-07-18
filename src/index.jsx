@@ -8,6 +8,7 @@ import ConsumerDurableLoan from "./pages/consume_durable_loan/ConsumerDurableLoa
 import CurrentAccount from "./pages/current_account/CurrentAccount.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import DataVerification from "./pages/data_verification/DataVerification.jsx";
+import LAPDocuments from "./pages/loan_against_property/LAP_Documents.jsx";
 import SageDashboard from "./pages/sage_dashboard/SageDashboard.jsx";
 import SuccessPage from "./pages/SuccessPage/SuccessPage.jsx";
 import TwoWheelerLoan from "./pages/two_wheeler_loan/TwoWheelerLoan.jsx";
@@ -20,6 +21,7 @@ const ProtectedTwoWheelerLoan = ProtectComponent(TwoWheelerLoan);
 const ProtectedConsumerDurableLoan = ProtectComponent(ConsumerDurableLoan);
 const ProtectedCurrentAccount = ProtectComponent(CurrentAccount);
 const ProtectedSageDashboard = ProtectComponent(SageDashboard);
+const ProtectedLAPDocuments = ProtectComponent(LAPDocuments);
 
 const appRouter = createBrowserRouter([
   {
@@ -57,6 +59,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/sage-dashboard/:id",
         element: <ProtectedSageDashboard />,
+      },
+      {
+        path: "/lap-documents/:id",
+        element: <ProtectedLAPDocuments />,
       },
     ],
     errorElement: <div>Error Page</div>,

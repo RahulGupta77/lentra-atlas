@@ -213,7 +213,7 @@ const Dashboard = () => {
                         {customer.name}
                       </td>
                       {/* <td>{customer.phone_number}</td> */}
-                      <td>
+                      {/* <td>
                         <button
                           onClick={() => {
                             navigate(`/current-account/${customer.uuid}`);
@@ -221,6 +221,16 @@ const Dashboard = () => {
                           style={{ width: "200px" }}
                         >
                           Current Account
+                        </button>
+                      </td> */}
+                       <td>
+                        <button
+                          onClick={() => {
+                            navigate(`/lap-documents/${customer.uuid}`);
+                          }}
+                          style={{ width: "200px" }}
+                        >
+                          LAP Documents
                         </button>
                       </td>
                       <td>
