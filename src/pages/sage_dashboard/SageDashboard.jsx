@@ -10,7 +10,7 @@ const SageDashboard = () => {
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
   const [promptName, setPromptName] = useState("MSME");
-  const PROMPT_OPTIONS = ["MSME", "TW", "CDL", "BFSI", "EDUCATON", "KOTAK"];
+  const PROMPT_OPTIONS = ["MSME", "TW", "CDL", "BFSI", "EDUCATON", "KOTAK", "LAP"];
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];

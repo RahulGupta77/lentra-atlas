@@ -2,6 +2,7 @@ import React from "react";
 import "./DocumentViewer.scss";
 
 const DocumentViewer = ({ documents }) => {
+  console.log(documents);
   return (
     <div className="document-container">
       {documents.map((doc, index) => (
@@ -26,9 +27,11 @@ const DocumentViewer = ({ documents }) => {
                     className="read-only-input"
                   />
                   <span className="confidence">
-                    {data.confidence_score
+                    {data.confidence_score !== undefined
                       ? `${(data.confidence_score * 100).toFixed(2)}%`
-                      : "N/A"}
+                      : data.confidence !== undefined
+                        ? `${(data.confidence * 100).toFixed(2)}%`
+                        : "N/A"}
                   </span>
                 </div>
               </div>
