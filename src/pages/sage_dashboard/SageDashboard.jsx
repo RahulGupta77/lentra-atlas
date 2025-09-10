@@ -1,16 +1,20 @@
 import axios from "axios";
 import { useRef, useState } from "react";
 import "./SageDashboard.scss";
+import { createS3UrlOfFile } from "../../services/LlmTestService";
 
 const SageDashboard = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [s3UrlLoading, setS3UrlLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
   const [promptName, setPromptName] = useState("MSME");
   const PROMPT_OPTIONS = ["MSME", "TW", "CDL", "BFSI", "EDUCATON", "KOTAK", "LAP"];
+  const [responseS3Url, setResponseS3Url] = useState(null);
+  const [s3UrlInput, setS3UrlInput] = useState("");
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -74,26 +78,173 @@ const SageDashboard = () => {
     }
   };
 
+  const createS3URL = async () => {
+    if (!selectedFile) {
+      setError("Please select a file first.");
+      return;
+    }
+
+    setS3UrlLoading(true);
+    setError(null);
+    setResponseS3Url(null);
+
+    try {
+      const response = await createS3UrlOfFile(selectedFile);
+      console.log("S3 URL Response:", response);
+      
+      if (response.status === 200 && response.data.presigned_url) {
+        setResponseS3Url(response.data.presigned_url);
+        setS3UrlInput(response.data.presigned_url); // Auto-fill the input
+      } else {
+        setError(response.data?.error || "Failed to create S3 URL");
+      }
+    } catch (error) {
+      console.error("Error creating S3 URL:", error);
+      setError("Error creating S3 URL. Please try again.");
+    } finally {
+      setS3UrlLoading(false);
+    }
+  };
+
+  const handleS3UrlUpload = async () => {
+    if (!s3UrlInput.trim()) {
+      setError("Please enter an S3 URL.");
+      return;
+    }
+
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+      setError("No access token found. Please login again.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setResponse(null);
+
+    try {
+      const response = await axios.post(
+        "https://uat-integrations.kreditmind.com/v2/verification/internal/sage",
+        {
+          file_url: s3UrlInput
+        },
+        {
+          headers: {
+            Token: accessToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+
+      if (response.data.error) {
+        setError(response.data.error);
+      } else {
+        setResponse(response.data);
+      }
+    } catch (error) {
+      console.error("Error uploading S3 URL:", error);
+      setError(
+        error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Error uploading S3 URL. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      // You could add a toast notification here
+      console.log("URL copied to clipboard");
+    });
+  };
+
   return (
     <div className="sage-dashboard">
       <div className="sage-dashboard__container">
         <h1 className="sage-dashboard__title">Image Upload Dashboard</h1>
 
         <div className="sage-dashboard__upload-section">
-          <input
-            ref={fileInputRef}
-            accept="image/*,application/pdf"
-            type="file"
-            onChange={handleFileSelect}
-            className="sage-dashboard__file-input"
-            id="image-upload"
-          />
-          <button
-            className="sage-dashboard__upload-button"
-            onClick={handleSelectClick}
-          >
-            Select Image
-          </button>
+          <div className="sage-dashboard__step">
+            <h3 style={{marginBottom: "10px"}}>Step 1: Select File and Create S3 URL</h3>
+            <input
+              ref={fileInputRef}
+              accept="image/*,application/pdf"
+              type="file"
+              onChange={handleFileSelect}
+              className="sage-dashboard__file-input"
+              id="image-upload"
+            />
+            <button
+              className="sage-dashboard__upload-button"
+              onClick={handleSelectClick}
+            >
+              Select File
+            </button>
+            
+            {selectedFile && (
+              <button
+                className="sage-dashboard__upload-button"
+                onClick={createS3URL}
+                disabled={s3UrlLoading}
+                style={{ marginLeft: "10px" }}
+              >
+                {s3UrlLoading ? "Creating S3 URL..." : "Create S3 URL"}
+              </button>
+            )}
+
+            {responseS3Url && (
+              <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#f0f0f0", borderRadius: "5px" }}>
+                <div style={{ marginBottom: "10px" }}>
+                  <span style={{ color: "green", fontWeight: "bold" }}>Generated S3 URL:</span>
+                </div>
+                <div style={{ 
+                  wordBreak: "break-all", 
+                  backgroundColor: "white", 
+                  padding: "8px", 
+                  borderRadius: "3px",
+                  border: "1px solid #ccc",
+                  marginBottom: "10px"
+                }}>
+                  {responseS3Url}
+                </div>
+                <button
+                  onClick={() => copyToClipboard(responseS3Url)}
+                  style={{ 
+                    padding: "5px 10px", 
+                    backgroundColor: "#007bff", 
+                    color: "white", 
+                    border: "none", 
+                    borderRadius: "3px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Copy URL
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="sage-dashboard__step">
+            <h3>Step 2: Upload S3 URL</h3>
+            <input
+              type="text"
+              placeholder="Enter S3 URL or use the generated one above"
+              className="sage-dashboard__input"
+              value={s3UrlInput}
+              onChange={(e) => setS3UrlInput(e.target.value)}
+              style={{ width: "100%", marginBottom: "10px" }}
+            />
+            <button
+              className="sage-dashboard__upload-button"
+              onClick={handleS3UrlUpload}
+              disabled={loading || !s3UrlInput.trim()}
+            >
+              {loading ? "Uploading..." : "Upload S3 URL"}
+            </button>
+          </div>
         </div>
 
         <form
@@ -143,21 +294,6 @@ const SageDashboard = () => {
           </div>
         )}
 
-        {selectedFile && (
-          <div className="sage-dashboard__upload-section">
-            <button
-              className="sage-dashboard__upload-button"
-              onClick={handleUpload}
-              disabled={loading}
-            >
-              {loading ? (
-                <span className="sage-dashboard__loading" />
-              ) : (
-                "Upload Image"
-              )}
-            </button>
-          </div>
-        )}
 
         {error && (
           <div className="sage-dashboard__error">
