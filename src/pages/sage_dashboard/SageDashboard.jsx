@@ -11,10 +11,18 @@ const SageDashboard = () => {
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
-  const [promptName, setPromptName] = useState("MSME");
-  const PROMPT_OPTIONS = ["MSME", "TW", "CDL", "BFSI", "EDUCATON", "KOTAK", "LAP"];
+  const [promptName, setPromptName] = useState("MSME_OD");
+  // const PROMPT_OPTIONS = ["MSME", "TW", "CDL", "BFSI", "EDUCATON", "KOTAK", "LAP"];
+  const PROMPT_OPTIONS = ["MSME_OD", "TW", "CDL", "LAP"];
   const [responseS3Url, setResponseS3Url] = useState(null);
   const [s3UrlInput, setS3UrlInput] = useState("");
+
+  // Generate a random flow_id
+  const generateFlowId = () => {
+    const timestamp = Date.now().toString(36);
+    const randomString = Math.random().toString(36).substring(2, 8);
+    return `flow_${timestamp}_${randomString}`;
+  };
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -126,7 +134,9 @@ const SageDashboard = () => {
       const response = await axios.post(
         "https://uat-integrations.kreditmind.com/v2/verification/internal/sage",
         {
-          file_url: s3UrlInput
+          flow_id: generateFlowId(),
+          file_url: s3UrlInput,
+          prompt_name: promptName
         },
         {
           headers: {
