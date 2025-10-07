@@ -13,9 +13,10 @@ const SageDashboard = () => {
   const fileInputRef = useRef(null);
   const [promptName, setPromptName] = useState("MSME_OD");
   // const PROMPT_OPTIONS = ["MSME", "TW", "CDL", "BFSI", "EDUCATON", "KOTAK", "LAP"];
-  const PROMPT_OPTIONS = ["MSME_OD", "TW", "CDL", "LAP"];
+  const PROMPT_OPTIONS = ["MSME_OD", "TW", "CDL", "LAP", "OTHER"];
   const [responseS3Url, setResponseS3Url] = useState(null);
   const [s3UrlInput, setS3UrlInput] = useState("");
+  const [customPrompt, setCustomPrompt] = useState("");
 
   // Generate a random flow_id
   const generateFlowId = () => {
@@ -55,6 +56,11 @@ const SageDashboard = () => {
     const formData = new FormData();
     formData.append("file", selectedFile);
     formData.append("prompt_name", promptName);
+    
+    // Add prompt field only if prompt_name is "OTHER"
+    if (promptName === "OTHER") {
+      formData.append("custom_prompt", customPrompt);
+    }
 
     try {
       const response = await axios.post(
@@ -131,13 +137,21 @@ const SageDashboard = () => {
     setResponse(null);
 
     try {
+      const requestData = {
+        flow_id: generateFlowId(),
+        file_url: s3UrlInput,
+        prompt_name: promptName
+      };
+      
+      // Add prompt field only if prompt_name is "OTHER"
+      if (promptName === "OTHER") {
+        requestData.custom_prompt = customPrompt;
+      }
+
       const response = await axios.post(
-        "https://uat-integrations.kreditmind.com/v2/verification/internal/sage",
-        {
-          flow_id: generateFlowId(),
-          file_url: s3UrlInput,
-          prompt_name: promptName
-        },
+        // "https://uat-integrations.kreditmind.com/v2/verification/internal/sage",
+        "http://localhost:5000/v2/verification/internal/sage",
+        requestData,
         {
           headers: {
             Token: accessToken,
@@ -280,6 +294,35 @@ const SageDashboard = () => {
             ))}
           </select>
         </form>
+
+        {promptName === "OTHER" && (
+          <div className="sage-dashboard__custom-prompt-section">
+            <label
+              htmlFor="custom-prompt"
+              className="sage-dashboard__prompt-label"
+            >
+              Custom Prompt:
+            </label>
+            <textarea
+              id="custom-prompt"
+              className="sage-dashboard__custom-prompt-textarea"
+              value={customPrompt}
+              onChange={(e) => setCustomPrompt(e.target.value)}
+              placeholder="Enter your custom prompt here..."
+              rows={6}
+              style={{
+                width: "100%",
+                padding: "10px",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                fontSize: "14px",
+                fontFamily: "inherit",
+                resize: "vertical",
+                minHeight: "120px"
+              }}
+            />
+          </div>
+        )}
 
         {preview && selectedFile && (
           <div className="sage-dashboard__preview-section">
