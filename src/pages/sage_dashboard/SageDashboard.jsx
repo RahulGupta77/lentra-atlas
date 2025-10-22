@@ -148,9 +148,11 @@ const SageDashboard = () => {
         requestData.custom_prompt = customPrompt;
       }
 
+      const productionUrl = "https://uat-integrations.kreditmind.com/v2/verification/internal/sage";
+      const developmentUrl = "http://localhost:5000/v2/verification/internal/sage";
+
       const response = await axios.post(
-        // "https://uat-integrations.kreditmind.com/v2/verification/internal/sage",
-        "http://localhost:5000/v2/verification/internal/sage",
+        productionUrl,
         requestData,
         {
           headers: {
@@ -356,13 +358,55 @@ const SageDashboard = () => {
         )}
 
         {response && (
-          <div className="sage-dashboard__response-section">
-            <h2 className="sage-dashboard__response-section-title">
-              API Response:
-            </h2>
-            <pre className="sage-dashboard__response-section-content">
-              {JSON.stringify(response, null, 2)}
-            </pre>
+          <div className="sage-dashboard__response-container">
+            {/* JSON Data Section */}
+            <div className="sage-dashboard__response-section">
+              <h2 className="sage-dashboard__response-section-title">
+                JSON Data
+              </h2>
+              <div className="sage-dashboard__response-section-content">
+                {response.data && (
+                  <div className="sage-dashboard__json-section">
+                    <pre className="sage-dashboard__json-content">
+                      {JSON.stringify(response.data, null, 2)}
+                    </pre>
+                  </div>
+                )}
+                {response.error && (
+                  <div className="sage-dashboard__json-section">
+                    <h4 className="sage-dashboard__json-section-title">Error:</h4>
+                    <pre className="sage-dashboard__json-content">
+                      {JSON.stringify(response.error, null, 2)}
+                    </pre>
+                  </div>
+                )}
+                {response.meta && (
+                  <div className="sage-dashboard__json-section">
+                    <h4 className="sage-dashboard__json-section-title">Meta:</h4>
+                    <pre className="sage-dashboard__json-content">
+                      {JSON.stringify(response.meta, null, 2)}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* SAGE RAW Response Section */}
+            {response.response_text && (
+              <>
+                {/* Raw Response Section */}
+                <div className="sage-dashboard__response-section">
+                  <h2 className="sage-dashboard__response-section-title">
+                    SAGE'S RAW Response
+                  </h2>
+                  <div className="sage-dashboard__raw-response-content">
+                    <pre className="sage-dashboard__raw-text">
+                      {response.response_text}
+                    </pre>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
