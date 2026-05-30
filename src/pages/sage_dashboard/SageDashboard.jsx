@@ -13,7 +13,7 @@ const SageDashboard = () => {
   const fileInputRef = useRef(null);
   const [promptName, setPromptName] = useState("MSME_OD");
   // const PROMPT_OPTIONS = ["MSME", "TW", "CDL", "BFSI", "EDUCATON", "KOTAK", "LAP"];
-  const PROMPT_OPTIONS = ["MSME_OD", "TW", "CDL", "LAP", "OTHER"];
+  const PROMPT_OPTIONS = ["MSME_OD", "TW", "CDL", "LAP", "OTHER", "V3_API"];
   const [responseS3Url, setResponseS3Url] = useState(null);
   const [s3UrlInput, setS3UrlInput] = useState("");
   const [customPrompt, setCustomPrompt] = useState("");
@@ -163,11 +163,13 @@ const SageDashboard = () => {
       );
 
 
-      if (response.data.error) {
-        setError(response.data.error);
-      } else {
-        setResponse(response.data);
-      }
+      // if (response.data.error) {
+      //   setError(response.data.error);
+      // } else {
+      //   setResponse(response.data);
+      // }
+
+      setResponse(response.data);
     } catch (error) {
       console.error("Error uploading S3 URL:", error);
       setError(
@@ -365,34 +367,50 @@ const SageDashboard = () => {
                 JSON Data
               </h2>
               <div className="sage-dashboard__response-section-content">
-                {response.data && (
+                {response?.data && (
                   <div className="sage-dashboard__json-section">
                     <pre className="sage-dashboard__json-content">
-                      {JSON.stringify(response.data, null, 2)}
-                    </pre>
-                  </div>
-                )}
-                {response.error && (
-                  <div className="sage-dashboard__json-section">
-                    <h4 className="sage-dashboard__json-section-title">Error:</h4>
-                    <pre className="sage-dashboard__json-content">
-                      {JSON.stringify(response.error, null, 2)}
-                    </pre>
-                  </div>
-                )}
-                {response.meta && (
-                  <div className="sage-dashboard__json-section">
-                    <h4 className="sage-dashboard__json-section-title">Meta:</h4>
-                    <pre className="sage-dashboard__json-content">
-                      {JSON.stringify(response.meta, null, 2)}
+                      {JSON.stringify(response?.data, null, 2)}
                     </pre>
                   </div>
                 )}
               </div>
             </div>
 
+            {/* Error Section */}
+            {response?.error && (
+              <div className="sage-dashboard__response-section" style={{ border: '2px solid #f44336', borderRadius: '8px' }}>
+                <h2 className="sage-dashboard__response-section-title" style={{ color: '#d32f2f' }}>
+                  Error
+                </h2>
+                <div className="sage-dashboard__response-section-content">
+                  <div className="sage-dashboard__json-section">
+                    <pre className="sage-dashboard__json-content" style={{ color: '#d32f2f' }}>
+                      {JSON.stringify(response?.error, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Meta Section */}
+            {response?.meta && (
+              <div className="sage-dashboard__response-section">
+                <h2 className="sage-dashboard__response-section-title">
+                  Meta
+                </h2>
+                <div className="sage-dashboard__response-section-content">
+                  <div className="sage-dashboard__json-section">
+                    <pre className="sage-dashboard__json-content">
+                      {JSON.stringify(response?.meta, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* SAGE RAW Response Section */}
-            {response.response_text && (
+            {response?.response_text && (
               <>
                 {/* Raw Response Section */}
                 <div className="sage-dashboard__response-section">
@@ -401,7 +419,7 @@ const SageDashboard = () => {
                   </h2>
                   <div className="sage-dashboard__raw-response-content">
                     <pre className="sage-dashboard__raw-text">
-                      {response.response_text}
+                      {response?.response_text}
                     </pre>
                   </div>
                 </div>

@@ -123,6 +123,7 @@ const AddBorrowerModalContent = ({ closeModalHandler, setAllCustomers }) => {
 const customerUuids = [
   "5fdf0aab-e969-4f39-9966-aa59ed8da2a8",
   "4b782bcb-2865-4a43-a4f4-80ce5244198b",
+  "ec447665-492d-11f1-8554-0694649bef3d"
 ];
 
 const Dashboard = () => {
